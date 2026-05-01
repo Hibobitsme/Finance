@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance Academy</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #58cc02; --green-dark: #46a302; --green-light: #d7f5b1;
+    --blue: #1cb0f6; --blue-dark: #0494cc; --blue-light: #ddf4ff;
+    --yellow: #ffc800; --yellow-dark: #e6a800; --yellow-light: #fff3cc;
+    --red: #ff4b4b; --red-light: #ffe0e0;
+    --purple: #ce82ff; --purple-dark: #a560e8; --purple-light: #f0d9ff;
+    --gray: #afafaf; --gray-light: #f7f7f7; --gray-dark: #777;
+    --text: #3c3c3c; --white: #ffffff;
+    --border: #e5e5e5; --shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--gray-light); color: var(--text); min-height: 100vh; }
+
+  /* NAV */
+  .nav { background: var(--white); border-bottom: 2px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-size: 22px; font-weight: 800; color: var(--green); letter-spacing: -0.5px; }
+  .nav-logo span { color: var(--text); }
+  .nav-stats { display: flex; gap: 20px; align-items: center; }
+  .stat-pill { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 15px; }
+  .stat-pill .icon { font-size: 18px; }
+  .stat-pill.streak { color: #ff9600; }
+  .stat-pill.xp { color: var(--green); }
+  .stat-pill.hearts { color: var(--red); }
+
+  /* LAYOUT */
+  .app { max-width: 860px; margin: 0 auto; padding: 32px 20px; }
+
+  /* SCREENS */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* HOME */
+  .home-header { text-align: center; margin-bottom: 36px; }
+  .home-header h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+  .home-header p { color: var(--gray-dark); font-size: 16px; }
+  .xp-bar-wrap { background: var(--border); border-radius: 99px; height: 14px; margin: 12px 0 4px; overflow: hidden; }
+  .xp-bar-fill { background: var(--green); height: 100%; border-radius: 99px; transition: width 0.5s ease; }
+  .xp-label { font-size: 13px; color: var(--gray-dark); text-align: right; }
+
+  /* MODULE GRID */
+  .modules-grid { display: flex; flex-direction: column; gap: 20px; }
+  .module-card { background: var(--white); border-radius: 20px; border: 2px solid var(--border); padding: 24px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+  .module-card:hover:not(.locked) { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .module-card.locked { opacity: 0.55; cursor: not-allowed; }
+  .module-card.completed { border-color: var(--green); }
+  .module-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+  .module-icon { font-size: 36px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 16px; flex-shrink: 0; }
+  .module-info h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  .module-info p { font-size: 14px; color: var(--gray-dark); line-height: 1.4; }
+  .module-progress-bar { background: var(--border); border-radius: 99px; height: 10px; margin-top: 12px; overflow: hidden; }
+  .module-progress-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease; }
+  .module-progress-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--gray-dark); margin-top: 6px; }
+  .lesson-dots { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .lesson-dot { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; background: var(--white); }
+  .lesson-dot.done { background: var(--green); border-color: var(--green); color: white; }
+  .lesson-dot.current { border-color: var(--blue); color: var(--blue); box-shadow: 0 0 0 3px var(--blue-light); }
+  .lesson-dot.locked-dot { background: var(--gray-light); color: var(--gray); cursor: not-allowed; }
+  .lock-badge { position: absolute; top: 16px; right: 16px; font-size: 22px; }
+
+  /* LESSON SCREEN */
+  .lesson-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+  .back-btn { background: none; border: none; font-size: 22px; cursor: pointer; padding: 6px; border-radius: 8px; transition: background 0.2s; }
+  .back-btn:hover { background: var(--border); }
+  .lesson-progress-bar { flex: 1; background: var(--border); border-radius: 99px; height: 12px; overflow: hidden; }
+  .lesson-progress-fill { background: var(--green); height: 100%; border-radius: 99px; transition: width 0.4s ease; }
+  .hearts-display { display: flex; gap: 4px; }
+  .heart { font-size: 20px; transition: all 0.3s; }
+  .heart.lost { filter: grayscale(1); opacity: 0.3; transform: scale(0.8); }
+
+  .lesson-title { font-size: 14px; font-weight: 700; color: var(--gray-dark); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .lesson-content-card { background: var(--white); border-radius: 20px; border: 2px solid var(--border); padding: 28px; margin-bottom: 24px; }
+  .lesson-content-card h2 { font-size: 24px; font-weight: 800; margin-bottom: 16px; }
+  .lesson-content-card p { font-size: 16px; line-height: 1.7; color: #444; margin-bottom: 14px; }
+  .lesson-content-card p:last-child { margin-bottom: 0; }
+  .highlight-box { background: var(--blue-light); border-left: 4px solid var(--blue); border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 16px 0; font-size: 15px; line-height: 1.6; }
+  .formula-box { background: var(--yellow-light); border: 2px solid var(--yellow); border-radius: 12px; padding: 14px 18px; margin: 16px 0; font-family: monospace; font-size: 15px; text-align: center; font-weight: 700; }
+  .key-terms { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
+  .key-term { background: var(--gray-light); border-radius: 12px; padding: 12px; }
+  .key-term strong { display: block; font-size: 14px; color: var(--blue-dark); margin-bottom: 4px; }
+  .key-term span { font-size: 13px; color: var(--gray-dark); line-height: 1.4; }
+
+  .continue-btn { width: 100%; padding: 16px; border-radius: 14px; border: none; font-size: 17px; font-weight: 800; cursor: pointer; transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.5px; }
+  .continue-btn.green { background: var(--green); color: white; border-bottom: 4px solid var(--green-dark); }
+  .continue-btn.green:hover { background: #4db800; }
+  .continue-btn.green:active { transform: translateY(2px); border-bottom-width: 2px; }
+  .continue-btn.blue { background: var(--blue); color: white; border-bottom: 4px solid var(--blue-dark); }
+  .continue-btn.blue:hover { background: #0aa0de; }
+  .continue-btn.blue:active { transform: translateY(2px); border-bottom-width: 2px; }
+
+  /* QUIZ */
+  .quiz-question { font-size: 22px; font-weight: 800; margin-bottom: 24px; line-height: 1.3; }
+  .quiz-options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+  .quiz-option { background: var(--white); border: 2px solid var(--border); border-radius: 14px; padding: 16px 20px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.15s; text-align: left; }
+  .quiz-option:hover:not(:disabled) { border-color: var(--blue); background: var(--blue-light); }
+  .quiz-option.selected { border-color: var(--blue); background: var(--blue-light); }
+  .quiz-option.correct { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+  .quiz-option.wrong { border-color: var(--red); background: var(--red-light); color: var(--red); }
+  .quiz-option:disabled { cursor: not-allowed; }
+
+  .feedback-bar { border-radius: 16px; padding: 18px 24px; margin-bottom: 20px; display: none; align-items: center; gap: 14px; }
+  .feedback-bar.show { display: flex; }
+  .feedback-bar.correct-fb { background: var(--green-light); border: 2px solid var(--green); }
+  .feedback-bar.wrong-fb { background: var(--red-light); border: 2px solid var(--red); }
+  .feedback-icon { font-size: 28px; }
+  .feedback-text strong { display: block; font-size: 16px; font-weight: 800; margin-bottom: 2px; }
+  .feedback-text span { font-size: 14px; color: var(--gray-dark); }
+  .feedback-bar.correct-fb .feedback-text strong { color: var(--green-dark); }
+  .feedback-bar.wrong-fb .feedback-text strong { color: var(--red); }
+
+  /* LESSON COMPLETE */
+  .complete-screen { text-align: center; padding: 40px 20px; }
+  .complete-screen .trophy { font-size: 80px; margin-bottom: 20px; animation: bounce 0.6s ease; }
+  @keyframes bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+  .complete-screen h2 { font-size: 30px; font-weight: 800; margin-bottom: 8px; }
+  .complete-screen p { color: var(--gray-dark); font-size: 16px; margin-bottom: 28px; }
+  .xp-earned { background: var(--yellow-light); border: 2px solid var(--yellow); border-radius: 16px; display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; font-size: 22px; font-weight: 800; color: var(--yellow-dark); margin-bottom: 28px; }
+  .stats-row { display: flex; justify-content: center; gap: 24px; margin-bottom: 32px; }
+  .stat-box { background: var(--white); border: 2px solid var(--border); border-radius: 16px; padding: 18px 24px; text-align: center; }
+  .stat-box .val { font-size: 28px; font-weight: 800; }
+  .stat-box .lbl { font-size: 13px; color: var(--gray-dark); margin-top: 2px; }
+
+  /* CONFETTI */
+  .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; overflow: hidden; }
+  .confetti-piece { position: absolute; width: 10px; height: 10px; top: -10px; animation: confettiFall linear forwards; border-radius: 2px; }
+  @keyframes confettiFall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+
+  /* MODALS */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: white; border-radius: 24px; padding: 32px; max-width: 420px; width: 100%; text-align: center; }
+  .modal h3 { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
+  .modal p { color: var(--gray-dark); font-size: 15px; margin-bottom: 24px; line-height: 1.5; }
+  .modal-btns { display: flex; flex-direction: column; gap: 10px; }
+  .modal-btn { padding: 14px; border-radius: 12px; border: none; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+  .modal-btn.primary { background: var(--green); color: white; border-bottom: 3px solid var(--green-dark); }
+  .modal-btn.secondary { background: var(--gray-light); color: var(--text); border: 2px solid var(--border); }
+
+  /* COLORS PER MODULE */
+  .mod-0 .module-icon { background: #fff3cc; } .mod-0 .module-progress-fill { background: var(--yellow); } .mod-0.module-card:hover:not(.locked) { border-color: var(--yellow); }
+  .mod-1 .module-icon { background: var(--blue-light); } .mod-1 .module-progress-fill { background: var(--blue); } .mod-1.module-card:hover:not(.locked) { border-color: var(--blue); }
+  .mod-2 .module-icon { background: var(--purple-light); } .mod-2 .module-progress-fill { background: var(--purple); } .mod-2.module-card:hover:not(.locked) { border-color: var(--purple); }
+  .mod-3 .module-icon { background: var(--green-light); } .mod-3 .module-progress-fill { background: var(--green); } .mod-3.module-card:hover:not(.locked) { border-color: var(--green); }
+
+  @media(max-width:600px) { .key-terms{grid-template-columns:1fr} .stats-row{gap:12px} }
+
+  /* NEW MODULE COLORS */
+  .mod-4 .module-icon { background: #e0f7fa; } .mod-4 .module-progress-fill { background: #00bcd4; } .mod-4.module-card:hover:not(.locked) { border-color: #00bcd4; }
+  .mod-5 .module-icon { background: #fbe9e7; } .mod-5 .module-progress-fill { background: #ff5722; } .mod-5.module-card:hover:not(.locked) { border-color: #ff5722; }
+  .mod-6 .module-icon { background: #ede7f6; } .mod-6 .module-progress-fill { background: #673ab7; } .mod-6.module-card:hover:not(.locked) { border-color: #673ab7; }
+
+  /* NAV FORMULA BUTTON */
+  .nav-formula-btn { background: var(--gray-light); border: 2px solid var(--border); border-radius: 10px; padding: 6px 14px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; color: var(--text); }
+  .nav-formula-btn:hover { background: var(--border); }
+
+  /* REVIEW CARD */
+  .review-card { border-color: var(--blue) !important; background: var(--blue-light); display: flex; align-items: center; gap: 20px; padding: 20px 24px; }
+  .review-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--blue-dark) !important; }
+  .review-card-icon { font-size: 40px; flex-shrink: 0; }
+  .review-card-info h2 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .review-card-info p { font-size: 14px; color: var(--gray-dark); }
+  .review-badge { background: var(--blue); color: white; border-radius: 99px; padding: 4px 12px; font-size: 13px; font-weight: 700; margin-left: auto; flex-shrink: 0; }
+
+  /* ACCURACY BADGE */
+  .accuracy-badge { display: inline-block; border-radius: 99px; padding: 3px 10px; font-size: 12px; font-weight: 700; margin-left: 8px; }
+  .accuracy-badge.good { background: var(--green-light); color: var(--green-dark); }
+  .accuracy-badge.ok { background: var(--yellow-light); color: var(--yellow-dark); }
+  .accuracy-badge.low { background: var(--red-light); color: var(--red); }
+
+  /* FORMULA SCREEN */
+  .formula-screen-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+  .formula-screen-header h1 { font-size: 26px; font-weight: 800; }
+  .formula-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .formula-category { background: white; border-radius: 20px; border: 2px solid var(--border); padding: 20px; }
+  .formula-cat-header { font-size: 15px; font-weight: 800; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+  .formula-item { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+  .formula-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .formula-item-name { font-size: 12px; font-weight: 700; color: var(--blue-dark); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .formula-box-sm { background: var(--yellow-light); border: 1.5px solid var(--yellow); border-radius: 8px; padding: 7px 12px; font-family: monospace; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .formula-item-note { font-size: 12px; color: var(--gray-dark); line-height: 1.4; }
+  @media(max-width:600px) { .formula-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Finance<span>Academy</span></div>
+  <div class="nav-stats">
+    <button class="nav-formula-btn" onclick="showScreen('formulas');renderFormulas()">📐 Formulas</button>
+    <div class="stat-pill streak"><span class="icon">🔥</span><span id="nav-streak">0</span></div>
+    <div class="stat-pill xp"><span class="icon">⭐</span><span id="nav-xp">0</span> XP</div>
+    <div class="stat-pill hearts"><span id="nav-hearts">❤️❤️❤️</span></div>
+  </div>
+</nav>
+
+<!-- CONFETTI -->
+<div class="confetti-container" id="confetti-container"></div>
+
+<!-- MODAL: No Hearts -->
+<div class="modal-overlay" id="modal-nolives">
+  <div class="modal">
+    <div style="font-size:60px;margin-bottom:12px">💔</div>
+    <h3>You're out of hearts!</h3>
+    <p>Hearts refill when you start a new study session. Come back tomorrow or keep practicing the material — you've got this!</p>
+    <div class="modal-btns">
+      <button class="modal-btn primary" onclick="refillHearts()">Refill Hearts (Practice Mode)</button>
+      <button class="modal-btn secondary" onclick="closeModal('modal-nolives');showScreen('home')">Back to Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREENS -->
+<div class="app">
+
+  <!-- HOME SCREEN -->
+  <div class="screen active" id="screen-home">
+    <div class="home-header">
+      <h1>Finance Academy 🎓</h1>
+      <p>Master finance before Clemson. Learn → Practice → Level up.</p>
+      <div style="margin-top:16px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:4px">
+          <span>Level <span id="home-level">1</span></span>
+          <span id="home-xp-label">0 / 500 XP</span>
+        </div>
+        <div class="xp-bar-wrap"><div class="xp-bar-fill" id="home-xp-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="modules-grid" id="modules-grid"></div>
+  </div>
+
+  <!-- LESSON SCREEN -->
+  <div class="screen" id="screen-lesson">
+    <div class="lesson-header">
+      <button class="back-btn" onclick="confirmBack()">✕</button>
+      <div class="lesson-progress-bar"><div class="lesson-progress-fill" id="lesson-progress-fill" style="width:0%"></div></div>
+      <div class="hearts-display" id="hearts-display"></div>
+    </div>
+    <div id="lesson-body"></div>
+  </div>
+
+  <!-- COMPLETE SCREEN -->
+  <div class="screen" id="screen-complete">
+    <div class="complete-screen" id="complete-body"></div>
+  </div>
+
+  <!-- FORMULA SCREEN -->
+  <div class="screen" id="screen-formulas">
+    <div class="formula-screen-header">
+      <button class="back-btn" onclick="showScreen('home');renderHome()">✕</button>
+      <h1>📐 Formula Reference</h1>
+    </div>
+    <div class="formula-grid" id="formula-body"></div>
+  </div>
+
+</div>
+
+<script>
+// ─── CURRICULUM ──────────────────────────────────────────────────────────────
+const CURRICULUM = [
+  {
+    id: 0, title: "Personal Finance", icon: "💰",
+    desc: "Budgeting, credit, saving, and taxes — the fundamentals of managing your own money.",
+    lessons: [
+      {
+        title: "Budgeting & Cash Flow",
+        content: `
+          <h2>Budgeting & Cash Flow</h2>
+          <p>A <strong>budget</strong> is a plan for your money. It tells every dollar where to go instead of wondering where it went. The most important concept in personal finance is <strong>cash flow</strong>: the difference between what comes in (income) and what goes out (expenses).</p>
+          <div class="highlight-box">💡 <strong>Positive cash flow</strong> = Income > Expenses → you're building wealth. <strong>Negative cash flow</strong> = Expenses > Income → you're going into debt.</div>
+          <p>The most popular budgeting framework is the <strong>50/30/20 rule</strong>:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>50% — Needs</strong><span>Rent, food, utilities, transportation, insurance</span></div>
+            <div class="key-term"><strong>30% — Wants</strong><span>Entertainment, dining out, subscriptions, hobbies</span></div>
+            <div class="key-term"><strong>20% — Savings/Debt</strong><span>Emergency fund, investing, paying off debt</span></div>
+          </div>
+          <p>Another approach is <strong>zero-based budgeting</strong>, where every dollar of income is assigned a job. Income minus all your allocations equals zero. This gives you total control and visibility over spending.</p>
+          <p>Tracking cash flow is the foundation for every other financial decision. You can't invest, save, or plan if you don't know what's coming in and going out each month.</p>
+        `,
+        quiz: [
+          { q: "What does 'positive cash flow' mean?", opts: ["You owe more than you earn","Your income exceeds your expenses","Your expenses equal your income","You have no debt"], ans: 1, exp: "Positive cash flow means money coming in is greater than money going out — you're ahead!" },
+          { q: "In the 50/30/20 rule, what does the 20% represent?", opts: ["Food and housing","Entertainment and wants","Savings and debt repayment","Taxes"], ans: 2, exp: "The 20% is for savings, investing, and paying off debt — building your future." },
+          { q: "Which budgeting method assigns every dollar of income a specific job?", opts: ["50/30/20 rule","Zero-based budgeting","Cash envelope method","Pay yourself first"], ans: 1, exp: "Zero-based budgeting means Income - All Allocations = 0. Every dollar has a purpose." },
+          { q: "If you earn $3,000/month and spend $3,400/month, what is your cash flow situation?", opts: ["Positive cash flow","Break-even","Negative cash flow","Zero-based"], ans: 2, exp: "Spending more than you earn creates negative cash flow and leads to accumulating debt." },
+          { q: "Under the 50/30/20 rule, which category would a Netflix subscription fall under?", opts: ["Needs (50%)","Wants (30%)","Savings (20%)","It depends on income"], ans: 1, exp: "Streaming services are wants — nice to have but not essential for survival." }
+        ]
+      },
+      {
+        title: "Credit & Debt Management",
+        content: `
+          <h2>Credit & Debt Management</h2>
+          <p>Your <strong>credit score</strong> is a number (300–850) that tells lenders how risky it is to loan you money. The higher your score, the better interest rates you'll get on loans, mortgages, and credit cards. A great score can save you tens of thousands of dollars over a lifetime.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Payment History (35%)</strong><span>Most important factor — pay on time, every time.</span></div>
+            <div class="key-term"><strong>Credit Utilization (30%)</strong><span>Keep balances below 30% of your credit limit.</span></div>
+            <div class="key-term"><strong>Length of History (15%)</strong><span>Older accounts help your score.</span></div>
+            <div class="key-term"><strong>Credit Mix (10%)</strong><span>Having different types of credit helps.</span></div>
+          </div>
+          <p><strong>Interest</strong> is the cost of borrowing money. When you carry a credit card balance, the interest compounds — meaning you pay interest on top of interest. This is why debt can spiral quickly.</p>
+          <div class="formula-box">Annual Percentage Rate (APR) = The yearly cost of borrowing, expressed as a %</div>
+          <p>Two popular debt payoff strategies:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Avalanche Method</strong><span>Pay off highest-interest debt first. Mathematically optimal — saves the most money.</span></div>
+            <div class="key-term"><strong>Snowball Method</strong><span>Pay off smallest balance first. More motivating — builds momentum with quick wins.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "What is the most important factor in calculating your credit score?", opts: ["Credit utilization","Length of credit history","Payment history","Types of credit"], ans: 2, exp: "Payment history makes up 35% of your FICO score — always pay on time!" },
+          { q: "Your credit limit is $1,000. To maintain a good score, you should keep your balance below:", opts: ["$500","$300","$700","$100"], ans: 1, exp: "Credit utilization should stay under 30%. On a $1,000 limit, that's $300." },
+          { q: "The debt avalanche method prioritizes paying off which debt first?", opts: ["Smallest balance","Largest balance","Highest interest rate","Oldest debt"], ans: 2, exp: "Avalanche = highest interest rate first. This saves the most money mathematically." },
+          { q: "What does APR stand for?", opts: ["Average Payment Rate","Annual Percentage Rate","Applied Principal Rate","Adjusted Prime Rate"], ans: 1, exp: "APR = Annual Percentage Rate — the yearly cost of borrowing money, including fees." },
+          { q: "If you only pay the minimum on a credit card, what happens to your balance?", opts: ["It stays the same","It decreases quickly","It grows due to compounding interest","It is forgiven after 7 years"], ans: 2, exp: "Minimum payments barely cover interest, so balances grow through compounding — the debt trap." }
+        ]
+      },
+      {
+        title: "Saving & Emergency Funds",
+        content: `
+          <h2>Saving & Emergency Funds</h2>
+          <p>Before you invest or tackle big financial goals, you need a safety net. An <strong>emergency fund</strong> is 3–6 months of living expenses saved in a liquid (easily accessible) account — typically a high-yield savings account (HYSA).</p>
+          <div class="highlight-box">🛡️ Emergency funds protect you from going into debt when life happens — a car repair, medical bill, or job loss shouldn't derail your finances.</div>
+          <p>The concept of <strong>"pay yourself first"</strong> means automatically transferring money to savings the moment your paycheck arrives — before you have a chance to spend it. Automate it so it requires zero willpower.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>High-Yield Savings (HYSA)</strong><span>Online savings accounts earning 4–5% APY vs. 0.01% at big banks. Best spot for emergency fund.</span></div>
+            <div class="key-term"><strong>Sinking Fund</strong><span>Saving gradually for a planned future expense (car, vacation, tuition).</span></div>
+            <div class="key-term"><strong>Liquidity</strong><span>How quickly you can access money without losing value. Savings accounts are highly liquid.</span></div>
+            <div class="key-term"><strong>APY</strong><span>Annual Percentage Yield — includes compounding, so it's slightly higher than the stated interest rate.</span></div>
+          </div>
+          <p>The real power of saving early is <strong>compound interest</strong>. Einstein reportedly called it the eighth wonder of the world. Money earns returns, then those returns earn returns — it snowballs over time.</p>
+          <div class="formula-box">A = P(1 + r/n)^(nt) — Compound Interest Formula</div>
+        `,
+        quiz: [
+          { q: "How much should a typical emergency fund cover?", opts: ["1 month of expenses","3–6 months of expenses","1 year of expenses","Just one large bill"], ans: 1, exp: "3–6 months of living expenses is the standard recommendation to cover most emergencies." },
+          { q: "What does 'pay yourself first' mean?", opts: ["Spend on fun before bills","Save a portion of income before spending on anything else","Pay off credit cards first","Give money to yourself as a bonus"], ans: 1, exp: "Pay yourself first = automatically save before spending. Remove the temptation entirely." },
+          { q: "Why is a High-Yield Savings Account (HYSA) better than a standard savings account?", opts: ["It's FDIC insured","It offers significantly higher interest rates","It has no fees","You can invest in stocks from it"], ans: 1, exp: "HYSAs earn 4–5% APY vs. 0.01% at traditional banks — your money works harder." },
+          { q: "What is a 'sinking fund'?", opts: ["A fund that loses money over time","Savings for an unplanned emergency","Gradual savings for a planned future expense","A type of retirement account"], ans: 2, exp: "Sinking funds are for planned expenses — you 'sink' money in each month until you have enough." },
+          { q: "Compound interest means you earn interest on:", opts: ["Only your original deposit","Your original deposit plus previously earned interest","Only new deposits","The bank's profit"], ans: 1, exp: "Compound interest = interest on interest. This exponential growth is what builds wealth over time." }
+        ]
+      },
+      {
+        title: "Introduction to Taxes",
+        content: `
+          <h2>Introduction to Taxes</h2>
+          <p>Taxes are one of the biggest expenses in your life, so understanding them is essential. The U.S. uses a <strong>progressive tax system</strong> — the more you earn, the higher the rate on additional income. But it's not all-or-nothing: you only pay the higher rate on the portion of income in that bracket.</p>
+          <div class="highlight-box">📌 A common myth: "If I get a raise into a higher bracket, I'll take home less." This is FALSE. You only pay the higher rate on the dollars above the threshold — not your whole income.</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Gross Income</strong><span>Total income before any deductions or taxes.</span></div>
+            <div class="key-term"><strong>Adjusted Gross Income (AGI)</strong><span>Gross income minus certain deductions (student loan interest, IRA contributions).</span></div>
+            <div class="key-term"><strong>Taxable Income</strong><span>AGI minus your standard or itemized deduction — what you actually get taxed on.</span></div>
+            <div class="key-term"><strong>Effective Tax Rate</strong><span>Your actual average tax rate — total taxes paid ÷ total income. Usually much lower than your marginal rate.</span></div>
+          </div>
+          <p>Two major retirement accounts reduce your taxes:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Traditional 401(k)/IRA</strong><span>Contribute pre-tax money now → pay taxes when you withdraw in retirement.</span></div>
+            <div class="key-term"><strong>Roth 401(k)/IRA</strong><span>Contribute after-tax money now → withdrawals in retirement are TAX-FREE.</span></div>
+          </div>
+          <p>For most college students and young earners, a <strong>Roth IRA</strong> is a no-brainer: you're in a low tax bracket now, so locking in that low rate is incredibly valuable.</p>
+        `,
+        quiz: [
+          { q: "In the U.S. progressive tax system, higher rates apply to:", opts: ["All of your income","Only the income above each bracket threshold","Only your investment income","Income over $1 million"], ans: 1, exp: "Progressive taxes apply the higher rate only to the dollars within that bracket — not your whole paycheck." },
+          { q: "What is 'taxable income'?", opts: ["Your salary from your job","Your AGI minus deductions","Your gross income","All money you receive"], ans: 1, exp: "Taxable income = Adjusted Gross Income − deductions. This is what's actually taxed." },
+          { q: "With a Roth IRA, when do you pay taxes?", opts: ["When you withdraw in retirement","Never","When you contribute (now)","Every year on the growth"], ans: 2, exp: "Roth = pay taxes now, withdraw tax-free later. Great when you're young and in a low tax bracket." },
+          { q: "If you earn $50,000 and are in the 22% marginal bracket, does ALL your income get taxed at 22%?", opts: ["Yes, all $50,000 is taxed at 22%","No, only the income above the lower bracket thresholds is taxed at 22%","Yes, but you get a refund","No, none of it is taxed at 22%"], ans: 1, exp: "Marginal rate only applies to income above the threshold. Your first dollars are taxed at lower rates." },
+          { q: "A Traditional 401(k) contribution reduces your taxes:", opts: ["When you retire and withdraw","Right now — it lowers your taxable income today","Never","Only if your employer matches"], ans: 1, exp: "Traditional accounts are pre-tax — your contribution reduces this year's taxable income." }
+        ]
+      }
+    ]
+  },
+  {
+    id: 1, title: "Markets & Investing", icon: "📈",
+    desc: "How financial markets work, stocks, bonds, risk, return, and building a portfolio.",
+    lessons: [
+      {
+        title: "How Financial Markets Work",
+        content: `
+          <h2>How Financial Markets Work</h2>
+          <p>Financial markets are places (physical or digital) where buyers and sellers exchange financial assets. They exist to connect people who need capital (companies, governments) with people who have capital (investors).</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Primary Market</strong><span>Where new securities are issued for the first time. An IPO (Initial Public Offering) is a company's first sale of stock to the public.</span></div>
+            <div class="key-term"><strong>Secondary Market</strong><span>Where existing securities are traded between investors. NYSE and NASDAQ are secondary markets.</span></div>
+            <div class="key-term"><strong>Market Capitalization</strong><span>Total value of a company's shares. Market Cap = Share Price × Shares Outstanding.</span></div>
+            <div class="key-term"><strong>Liquidity</strong><span>How easily an asset can be bought or sold without affecting its price. Public stocks are very liquid.</span></div>
+          </div>
+          <p>Key market indexes track overall market performance:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>S&P 500</strong><span>500 largest U.S. companies. The most-watched benchmark for U.S. market performance.</span></div>
+            <div class="key-term"><strong>Dow Jones (DJIA)</strong><span>30 large U.S. companies. Older, less representative than S&P 500.</span></div>
+            <div class="key-term"><strong>NASDAQ</strong><span>Tech-heavy index. Home to Apple, Google, Microsoft, Amazon.</span></div>
+            <div class="key-term"><strong>Bull vs. Bear Market</strong><span>Bull = rising market (optimism). Bear = falling market 20%+ from peak (pessimism).</span></div>
+          </div>
+          <p>Markets process information through <strong>price discovery</strong> — at any moment, an asset's price reflects all available public information. This is the basis of the Efficient Market Hypothesis (EMH).</p>
+        `,
+        quiz: [
+          { q: "Where does a company's IPO take place?", opts: ["Secondary market","Primary market","Bond market","Commodity market"], ans: 1, exp: "IPOs happen in the primary market — it's the first time shares are sold to the public." },
+          { q: "The S&P 500 tracks:", opts: ["The 30 largest U.S. companies","500 large U.S. companies","All U.S. stocks","Only tech companies"], ans: 1, exp: "S&P 500 = 500 of the largest U.S. public companies. It's the most common benchmark." },
+          { q: "A 'bear market' is defined as:", opts: ["Market rising 20%+ from a low","Market falling 20%+ from a peak","Any day stocks go down","Market with low trading volume"], ans: 1, exp: "Bear market = stocks down 20%+ from their peak. Bull market = stocks up 20%+ from their trough." },
+          { q: "Market Capitalization is calculated as:", opts: ["Annual revenue × 10","Share price × shares outstanding","Total assets − total liabilities","Net income × P/E ratio"], ans: 1, exp: "Market Cap = Share Price × Shares Outstanding. It's the total market value of a company." },
+          { q: "The NYSE and NASDAQ are examples of:", opts: ["Primary markets","Bond markets","Secondary markets","Futures markets"], ans: 2, exp: "NYSE and NASDAQ are secondary markets — where investors trade existing shares with each other." }
+        ]
+      },
+      {
+        title: "Stocks, Bonds & Asset Classes",
+        content: `
+          <h2>Stocks, Bonds & Asset Classes</h2>
+          <p>An <strong>asset class</strong> is a group of investments with similar characteristics and behavior. Understanding different asset classes is essential for building a portfolio.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Stocks (Equities)</strong><span>Ownership in a company. Potential for high returns but higher risk. Returns come from price appreciation and dividends.</span></div>
+            <div class="key-term"><strong>Bonds (Fixed Income)</strong><span>Loans to companies or governments. More stable, lower return. You receive regular interest payments (coupon) plus principal at maturity.</span></div>
+            <div class="key-term"><strong>Real Estate</strong><span>Physical property or REITs. Provides income (rent) and appreciation. Less liquid than stocks.</span></div>
+            <div class="key-term"><strong>Cash & Equivalents</strong><span>Savings accounts, money market funds, T-bills. Very safe, very low return. Best for short-term needs.</span></div>
+          </div>
+          <div class="highlight-box">⚖️ Key relationship: <strong>Stocks and bonds often move in opposite directions</strong> — when stocks fall, investors flee to bonds for safety. This makes them powerful portfolio balancers.</div>
+          <p>Within stocks, there are key distinctions:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Growth Stocks</strong><span>Companies expected to grow faster than average (e.g., tech). Reinvest profits instead of paying dividends.</span></div>
+            <div class="key-term"><strong>Value Stocks</strong><span>Companies trading below their perceived intrinsic value. Often mature, dividend-paying companies.</span></div>
+            <div class="key-term"><strong>Dividends</strong><span>Cash payments companies make to shareholders from profits, typically quarterly.</span></div>
+            <div class="key-term"><strong>Bond Yield</strong><span>The return you earn on a bond. Bond prices and yields move in opposite directions.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "When you buy a stock, you are:", opts: ["Lending money to a company","Becoming a partial owner of the company","Guaranteed a fixed return","Buying physical company assets"], ans: 1, exp: "Stocks = equity = ownership. As a shareholder, you own a fraction of the company." },
+          { q: "When you buy a bond, you are:", opts: ["Becoming an owner of the company","Lending money to the issuer","Speculating on price movements","Buying real estate"], ans: 1, exp: "Bonds are debt instruments — you lend money and get interest + principal back." },
+          { q: "If bond prices go UP, what happens to bond yields?", opts: ["Yields go up","Yields go down","Yields stay the same","Yields become negative"], ans: 1, exp: "Prices and yields move inversely. When price rises, the fixed coupon payment represents a lower percentage return." },
+          { q: "Which asset class is typically considered the SAFEST?", opts: ["Stocks","Bonds","Real Estate","Cash & Cash Equivalents"], ans: 3, exp: "Cash equivalents (T-bills, money market) have essentially no risk of loss — but also the lowest returns." },
+          { q: "A 'dividend' is:", opts: ["A fee paid to brokers","A company's quarterly earnings report","Cash paid by a company to its shareholders","The difference between stock price and value"], ans: 2, exp: "Dividends are profit-sharing payments from a company to its shareholders, usually quarterly." }
+        ]
+      },
+      {
+        title: "Risk, Return & Diversification",
+        content: `
+          <h2>Risk, Return & Diversification</h2>
+          <p>In finance, <strong>risk and return are inseparable</strong>. To earn higher returns, you must accept higher risk. There is no free lunch. Understanding this trade-off is central to all investing and corporate finance decisions.</p>
+          <div class="formula-box">Expected Return = Risk-Free Rate + Risk Premium</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Systematic Risk</strong><span>Market-wide risk that affects all assets (recession, interest rates). Cannot be diversified away.</span></div>
+            <div class="key-term"><strong>Unsystematic Risk</strong><span>Company or industry-specific risk (bad CEO, product recall). Can be eliminated through diversification.</span></div>
+            <div class="key-term"><strong>Diversification</strong><span>Spreading investments across assets so one failure doesn't sink you. "Don't put all your eggs in one basket."</span></div>
+            <div class="key-term"><strong>Volatility (σ)</strong><span>How much an investment's returns fluctuate. Measured by standard deviation. High volatility = more risk.</span></div>
+          </div>
+          <p><strong>Beta (β)</strong> measures how much a stock moves relative to the market:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>β = 1.0</strong><span>Moves with the market exactly.</span></div>
+            <div class="key-term"><strong>β > 1.0</strong><span>More volatile than the market (e.g., tech stocks). Higher potential return AND loss.</span></div>
+            <div class="key-term"><strong>β < 1.0</strong><span>Less volatile than the market (e.g., utilities). More stable, lower return.</span></div>
+            <div class="key-term"><strong>β < 0</strong><span>Moves opposite to the market (e.g., gold). Useful for hedging.</span></div>
+          </div>
+          <div class="highlight-box">🎯 Key insight: Diversification can eliminate unsystematic risk for FREE. It's one of the only true free lunches in finance.</div>
+        `,
+        quiz: [
+          { q: "What is the fundamental trade-off in investing?", opts: ["Stocks vs. Bonds","Risk vs. Return","Short-term vs. Long-term","Domestic vs. International"], ans: 1, exp: "Higher potential returns always come with higher risk. This is a foundational principle of finance." },
+          { q: "Which type of risk CAN be eliminated through diversification?", opts: ["Systematic risk","Market risk","Unsystematic (company-specific) risk","Interest rate risk"], ans: 2, exp: "Unsystematic risk is company-specific. Spread across many companies and it averages out." },
+          { q: "A stock with Beta = 1.5 means:", opts: ["It loses 1.5% per year","It is 50% more volatile than the overall market","It has a 1.5% dividend yield","It moves opposite to the market"], ans: 1, exp: "Beta > 1 means more volatile than the market. If the market moves 10%, this stock moves ~15%." },
+          { q: "What does standard deviation measure in finance?", opts: ["Average return over time","The volatility/risk of an investment's returns","The correlation between two stocks","A bond's interest payment"], ans: 1, exp: "Standard deviation measures how much returns fluctuate around the average — higher σ = more risk." },
+          { q: "Which type of risk cannot be diversified away?", opts: ["Company-specific risk","Systematic (market) risk","Industry risk","Management risk"], ans: 1, exp: "Systematic risk affects the whole market (recessions, inflation). You can't escape it by diversifying." }
+        ]
+      },
+      {
+        title: "Investment Vehicles & Strategies",
+        content: `
+          <h2>Investment Vehicles & Strategies</h2>
+          <p>Beyond individual stocks and bonds, investors use various <strong>investment vehicles</strong> that bundle assets together for convenience, diversification, and cost efficiency.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Mutual Fund</strong><span>Pool of investor money managed by a professional. Actively managed. Higher fees (expense ratio ~1%).</span></div>
+            <div class="key-term"><strong>Index Fund</strong><span>Passively tracks a market index (S&P 500). No active management. Very low fees (~0.03%). Often outperforms active funds long-term.</span></div>
+            <div class="key-term"><strong>ETF (Exchange-Traded Fund)</strong><span>Like an index fund but trades on an exchange like a stock. Very low fees, tax efficient.</span></div>
+            <div class="key-term"><strong>401(k) / IRA</strong><span>Tax-advantaged accounts for retirement investing. Use these FIRST before taxable accounts.</span></div>
+          </div>
+          <div class="highlight-box">📊 The data is clear: over 15+ year periods, ~90% of actively managed funds underperform their benchmark index. Most experts recommend low-cost index funds for most investors.</div>
+          <p>Two major investing philosophies:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Dollar-Cost Averaging (DCA)</strong><span>Invest a fixed amount on a regular schedule regardless of price. Removes emotion and timing risk.</span></div>
+            <div class="key-term"><strong>Lump Sum Investing</strong><span>Invest all available money at once. Statistically beats DCA about 2/3 of the time, but requires more courage.</span></div>
+            <div class="key-term"><strong>Time Horizon</strong><span>How long until you need the money. Longer horizon = can accept more risk = more stocks.</span></div>
+            <div class="key-term"><strong>Expense Ratio</strong><span>Annual fee charged by a fund, as % of assets. A 1% fee on $100K = $1,000/year — it compounds against you.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "What is the main advantage of an index fund over an actively managed mutual fund?", opts: ["Higher returns guaranteed","Lower fees and often better long-term performance","More diversification","Access to private companies"], ans: 1, exp: "Index funds have tiny fees (0.03% vs ~1%) and most active managers can't beat their index anyway." },
+          { q: "Dollar-cost averaging means:", opts: ["Buying stocks when prices are low","Investing a fixed amount on a regular schedule","Averaging the prices of multiple stocks","Converting foreign currency to dollars"], ans: 1, exp: "DCA = invest regularly regardless of market conditions. Removes emotional decision-making." },
+          { q: "An ETF is different from a mutual fund because it:", opts: ["Only invests in bonds","Trades on a stock exchange throughout the day","Has higher fees","Is only for retirement accounts"], ans: 1, exp: "ETFs trade like stocks on an exchange throughout the day, while mutual funds price once daily at close." },
+          { q: "Which should you typically max out FIRST before investing in a taxable account?", opts: ["A brokerage account","A savings account","Tax-advantaged accounts like 401(k) or IRA","Crypto wallets"], ans: 2, exp: "401(k) and IRA provide tax advantages (tax-free growth or deductions). Always use these first." },
+          { q: "An expense ratio of 1% vs. 0.03% on a $50,000 investment means you pay roughly:", opts: ["$3 vs. $500 annually","$500 vs. $15 annually","$1,000 vs. $30 annually","$50 vs. $1.50 annually"], ans: 1, exp: "1% of $50K = $500/year. 0.03% of $50K = $15/year. Fees compound against you over decades." }
+        ]
+      }
+    ]
+  },
+  {
+    id: 2, title: "Corporate Finance", icon: "🏢",
+    desc: "Time value of money, capital structure, cost of capital, and business valuation.",
+    lessons: [
+      {
+        title: "Time Value of Money",
+        content: `
+          <h2>Time Value of Money</h2>
+          <p>The <strong>Time Value of Money (TVM)</strong> is the single most important concept in all of finance. The core idea: a dollar today is worth more than a dollar in the future, because today's dollar can be invested to earn returns.</p>
+          <div class="formula-box">Future Value: FV = PV × (1 + r)^n</div>
+          <div class="formula-box">Present Value: PV = FV / (1 + r)^n</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>PV (Present Value)</strong><span>What a future amount is worth in today's dollars.</span></div>
+            <div class="key-term"><strong>FV (Future Value)</strong><span>What today's money grows to at a given rate over time.</span></div>
+            <div class="key-term"><strong>r (Discount Rate)</strong><span>The interest or required return rate. Reflects risk and opportunity cost.</span></div>
+            <div class="key-term"><strong>n (Periods)</strong><span>Number of time periods (usually years).</span></div>
+          </div>
+          <div class="highlight-box">💡 Example: $1,000 invested at 8% for 10 years = $1,000 × (1.08)^10 = $2,159. Your money more than doubles!</div>
+          <p>TVM is used everywhere in corporate finance:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>NPV (Net Present Value)</strong><span>Sum of all future cash flows discounted to today. If NPV > 0, the investment creates value → take it.</span></div>
+            <div class="key-term"><strong>IRR (Internal Rate of Return)</strong><span>The discount rate that makes NPV = 0. If IRR > cost of capital → take the project.</span></div>
+            <div class="key-term"><strong>Annuity</strong><span>A series of equal cash flows at regular intervals (mortgage payments, bond coupons).</span></div>
+            <div class="key-term"><strong>Perpetuity</strong><span>An annuity that lasts forever. PV = Cash Flow / r. (Used in stock valuation.)</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "The Time Value of Money principle states that:", opts: ["Money in the future is worth more","A dollar today is worth more than a dollar in the future","Inflation makes money worthless","Interest rates don't matter"], ans: 1, exp: "Today's dollar can be invested to grow — so it's always worth more than the same amount received later." },
+          { q: "If PV = $500, r = 10%, n = 2 years, what is the Future Value?", opts: ["$550","$600","$605","$610"], ans: 2, exp: "FV = 500 × (1.10)^2 = 500 × 1.21 = $605. Don't forget compounding!" },
+          { q: "If a project has NPV > 0, you should:", opts: ["Reject it — it's too risky","Accept it — it creates value","Wait for more information","Ask about IRR first"], ans: 1, exp: "NPV > 0 means the project returns more than its cost of capital — it creates value. Accept it." },
+          { q: "A perpetuity pays $100/year forever. If r = 5%, what is its Present Value?", opts: ["$1,000","$2,000","$500","$5,000"], ans: 1, exp: "PV of perpetuity = Cash Flow / r = $100 / 0.05 = $2,000." },
+          { q: "The IRR is the discount rate at which:", opts: ["NPV is maximized","NPV equals zero","The project is most profitable","Future value equals present value"], ans: 1, exp: "IRR = the rate that makes NPV = 0. If IRR > your cost of capital, the project is worthwhile." }
+        ]
+      },
+      {
+        title: "Capital Structure & Financing",
+        content: `
+          <h2>Capital Structure & Financing</h2>
+          <p><strong>Capital structure</strong> refers to how a company finances its assets — through a mix of debt (bonds/loans) and equity (stock). It's one of the most important strategic decisions a CFO makes.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Debt Financing</strong><span>Borrowing money (bonds, bank loans). Must be repaid with interest. Creates a tax shield since interest is tax-deductible.</span></div>
+            <div class="key-term"><strong>Equity Financing</strong><span>Selling ownership (stock). No repayment required, but dilutes existing shareholders and costs more than debt.</span></div>
+            <div class="key-term"><strong>Leverage</strong><span>Using debt to amplify returns. High leverage = more potential upside AND more risk of financial distress.</span></div>
+            <div class="key-term"><strong>Debt-to-Equity (D/E)</strong><span>Key ratio measuring financial leverage. D/E = Total Debt / Total Equity.</span></div>
+          </div>
+          <div class="highlight-box">🔑 The <strong>Tax Shield</strong>: Interest payments on debt are tax-deductible. This makes debt cheaper than equity for profitable companies, which is why firms use leverage strategically.</div>
+          <p>Key theories of capital structure:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Modigliani-Miller (M&M)</strong><span>In a perfect world (no taxes, no bankruptcy costs), capital structure doesn't matter. In reality, taxes and distress costs make it matter a lot.</span></div>
+            <div class="key-term"><strong>Trade-Off Theory</strong><span>Firms balance the tax benefit of debt against the costs of financial distress. Optimal capital structure = where these two offset.</span></div>
+            <div class="key-term"><strong>Pecking Order Theory</strong><span>Firms prefer internal financing first, then debt, then equity (new stock issuance signals bad news to markets).</span></div>
+            <div class="key-term"><strong>Financial Distress</strong><span>When debt obligations threaten a firm's survival. Bankruptcy costs destroy value — another reason not to over-leverage.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "What is a key advantage of debt financing over equity financing?", opts: ["No risk of bankruptcy","Interest payments are tax-deductible (tax shield)","Debt never needs to be repaid","Debt holders have voting rights"], ans: 1, exp: "Interest is tax-deductible, which reduces the effective cost of debt — creating a valuable tax shield." },
+          { q: "High financial leverage means:", opts: ["The company has little debt","The company uses significant debt to finance assets","The company is in bankruptcy","The stock price is rising"], ans: 1, exp: "Leverage = using debt to amplify returns. High leverage = high debt relative to equity." },
+          { q: "According to Trade-Off Theory, the optimal capital structure balances:", opts: ["Debt vs. equity returns","Tax benefits of debt vs. costs of financial distress","Short-term vs. long-term debt","Dividends vs. retained earnings"], ans: 1, exp: "Trade-Off Theory: more debt → more tax savings BUT more risk of bankruptcy. Optimal D/E is where these balance." },
+          { q: "Pecking Order Theory predicts firms prefer financing in which order?", opts: ["Equity → Debt → Internal funds","Internal funds → Debt → Equity","Debt → Equity → Internal funds","External equity → Bonds → Cash"], ans: 1, exp: "Pecking Order: internal cash first (no information problem), then debt, then new equity as a last resort." },
+          { q: "The Debt-to-Equity ratio measures:", opts: ["How profitable the company is","How much debt the company uses relative to shareholder equity","How quickly debts are paid off","The company's market value vs. book value"], ans: 1, exp: "D/E = Total Debt / Total Equity. It shows how leveraged a company is. Higher = more risk." }
+        ]
+      },
+      {
+        title: "WACC & Cost of Capital",
+        content: `
+          <h2>WACC & Cost of Capital</h2>
+          <p>Every source of capital has a cost. Equity investors expect returns (dividends + appreciation). Debt holders expect interest. The <strong>Weighted Average Cost of Capital (WACC)</strong> blends these costs based on the company's capital structure.</p>
+          <div class="formula-box">WACC = (E/V × Re) + (D/V × Rd × (1 − Tax Rate))</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>E/V</strong><span>Equity as a proportion of total firm value (E + D).</span></div>
+            <div class="key-term"><strong>Re</strong><span>Cost of equity — the return equity investors require.</span></div>
+            <div class="key-term"><strong>D/V</strong><span>Debt as a proportion of total firm value.</span></div>
+            <div class="key-term"><strong>Rd × (1−T)</strong><span>After-tax cost of debt (interest rate reduced by tax savings).</span></div>
+          </div>
+          <p>The cost of equity (Re) is estimated using the <strong>Capital Asset Pricing Model (CAPM)</strong>:</p>
+          <div class="formula-box">Re = Rf + β × (Rm − Rf)</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Rf</strong><span>Risk-free rate — return on U.S. Treasury bonds. The baseline "safe" return.</span></div>
+            <div class="key-term"><strong>β (Beta)</strong><span>Systematic risk of the stock relative to the market.</span></div>
+            <div class="key-term"><strong>(Rm − Rf)</strong><span>Equity risk premium — extra return investors demand for taking market risk (historically ~5–7%).</span></div>
+          </div>
+          <div class="highlight-box">🎯 WACC is used as the discount rate in NPV analysis. If a project returns more than the WACC, it creates value for shareholders. If less, it destroys value.</div>
+        `,
+        quiz: [
+          { q: "WACC represents:", opts: ["The company's revenue growth rate","The blended cost of all capital sources weighted by their proportion","The return on assets","The interest rate on new bonds"], ans: 1, exp: "WACC = weighted average of the cost of equity and after-tax cost of debt based on the capital mix." },
+          { q: "In CAPM, the 'risk-free rate' is typically represented by:", opts: ["Corporate bond yields","U.S. Treasury bond yields","The S&P 500 return","The Fed Funds Rate"], ans: 1, exp: "U.S. Treasury bonds are considered risk-free (backed by the government). They're the baseline in CAPM." },
+          { q: "If a company's WACC is 8% and a project returns 11%, the company should:", opts: ["Reject the project","Accept the project — it creates value","Wait for interest rates to fall","Refinance its debt first"], ans: 1, exp: "Return (11%) > WACC (8%) = the project earns more than its cost of capital → it creates shareholder value." },
+          { q: "Why is the cost of debt adjusted by (1 - Tax Rate) in the WACC formula?", opts: ["To account for inflation","Because interest is tax-deductible, reducing the effective cost","Because debt is always cheaper","To adjust for currency risk"], ans: 1, exp: "Interest expense reduces taxable income, so the government effectively subsidizes part of the cost." },
+          { q: "A company with Beta = 2.0, Rf = 3%, and market risk premium = 6% has a cost of equity (CAPM) of:", opts: ["9%","12%","15%","6%"], ans: 2, exp: "Re = 3% + 2.0 × 6% = 3% + 12% = 15%. Higher beta = higher required return." }
+        ]
+      },
+      {
+        title: "Business Valuation Basics",
+        content: `
+          <h2>Business Valuation Basics</h2>
+          <p>How much is a company worth? Valuation is at the heart of corporate finance, investment banking, and investing. There are three primary approaches, each with different applications.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>DCF (Discounted Cash Flow)</strong><span>Intrinsic value method. Project future free cash flows, then discount back to today using WACC. "What's it truly worth based on fundamentals?"</span></div>
+            <div class="key-term"><strong>Comparable Company Analysis (Comps)</strong><span>Value based on how similar public companies are valued. Uses multiples like P/E, EV/EBITDA.</span></div>
+            <div class="key-term"><strong>Precedent Transactions</strong><span>Value based on what acquirers have paid for similar companies in past M&A deals. Usually highest valuation — includes control premium.</span></div>
+          </div>
+          <p>Key valuation multiples:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>P/E Ratio</strong><span>Price per share / Earnings per share. How much investors pay per $1 of earnings. Industry benchmark for stock valuation.</span></div>
+            <div class="key-term"><strong>EV/EBITDA</strong><span>Enterprise Value / EBITDA. Capital structure-neutral multiple. Preferred in M&A because it's comparable across companies with different debt levels.</span></div>
+            <div class="key-term"><strong>Enterprise Value (EV)</strong><span>Total value of the business = Market Cap + Debt − Cash. What it would cost to buy the whole company.</span></div>
+            <div class="key-term"><strong>Terminal Value</strong><span>In a DCF, the value of all cash flows beyond the explicit forecast period. Often 60–80% of total DCF value.</span></div>
+          </div>
+          <div class="highlight-box">🏦 Investment bankers typically use all three methods and present a "football field" chart showing the valuation ranges — then triangulate to a final number.</div>
+        `,
+        quiz: [
+          { q: "In a DCF valuation, what rate do you use to discount future cash flows?", opts: ["The risk-free rate","The WACC","The P/E ratio","The dividend yield"], ans: 1, exp: "WACC is the appropriate discount rate in DCF — it reflects the blended cost of the company's capital." },
+          { q: "Which valuation method compares a company to similar publicly traded firms?", opts: ["DCF analysis","Precedent transactions","Comparable company analysis (Comps)","Book value analysis"], ans: 2, exp: "Comps uses valuation multiples from similar public companies — the most common quick-valuation approach." },
+          { q: "Enterprise Value (EV) is calculated as:", opts: ["Market Cap only","Market Cap + Debt − Cash","Net Income × 10","Total Assets"], ans: 1, exp: "EV = Market Cap + Debt − Cash. It represents the full cost to acquire a company." },
+          { q: "Why do precedent transactions typically show the highest valuation?", opts: ["They use better forecasts","They include a control premium paid by acquirers","They are the most optimistic method","They ignore debt"], ans: 1, exp: "Acquirers pay a 'control premium' (typically 20–40% above market price) to gain control of a company." },
+          { q: "The P/E ratio measures:", opts: ["How quickly the company grows","How much investors pay per dollar of earnings","The company's debt level","Profit margin"], ans: 1, exp: "P/E = Price / Earnings. A P/E of 20 means investors pay $20 for every $1 of annual earnings." }
+        ]
+      }
+    ]
+  },
+  {
+    id: 3, title: "Financial Statements", icon: "📊",
+    desc: "Read and analyze income statements, balance sheets, cash flows, and key ratios.",
+    lessons: [
+      {
+        title: "The Income Statement",
+        content: `
+          <h2>The Income Statement</h2>
+          <p>The <strong>income statement</strong> (also called the Profit & Loss or P&L) shows a company's revenues and expenses over a period of time (quarter or year). It answers: <em>Did the company make money?</em></p>
+          <div class="highlight-box">📅 Key distinction: The income statement covers a <strong>period of time</strong> (e.g., Q3 2024). The balance sheet is a snapshot <strong>at a point in time</strong>.</div>
+          <p>The income statement flows from top to bottom:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Revenue (Top Line)</strong><span>Total sales. The starting point. Also called "sales" or "net revenue."</span></div>
+            <div class="key-term"><strong>COGS</strong><span>Cost of Goods Sold — direct costs to produce goods/services (materials, labor). Revenue − COGS = Gross Profit.</span></div>
+            <div class="key-term"><strong>Gross Profit</strong><span>Revenue − COGS. Shows core business profitability before overhead.</span></div>
+            <div class="key-term"><strong>Operating Expenses (OpEx)</strong><span>Indirect costs: R&D, marketing, administrative, salaries. Gross Profit − OpEx = EBIT.</span></div>
+          </div>
+          <div class="key-terms">
+            <div class="key-term"><strong>EBIT</strong><span>Earnings Before Interest and Taxes. Operating profit — profitability of the core business ignoring financing and taxes.</span></div>
+            <div class="key-term"><strong>EBITDA</strong><span>EBIT + Depreciation + Amortization. A proxy for operating cash flow. Widely used in valuation.</span></div>
+            <div class="key-term"><strong>Net Income (Bottom Line)</strong><span>Revenue minus ALL expenses and taxes. The "profit" headline number. Basis for EPS.</span></div>
+            <div class="key-term"><strong>EPS</strong><span>Earnings Per Share = Net Income / Shares Outstanding. How much profit per share of stock.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "The income statement covers:", opts: ["A single point in time","A period of time (quarter or year)","The company's entire history","Only cash transactions"], ans: 1, exp: "Income statements cover a time PERIOD (Jan 1 – Dec 31). Balance sheets are point-in-time snapshots." },
+          { q: "What does COGS stand for?", opts: ["Cost of Goods Sold","Company Operating Gross Sales","Cash on General Statement","Capital Outflow Gross Sum"], ans: 0, exp: "COGS = Cost of Goods Sold — the direct costs of producing the goods or services sold." },
+          { q: "Gross Profit is calculated as:", opts: ["Revenue − All Expenses","Revenue − COGS","Revenue − Taxes","Net Income + Depreciation"], ans: 1, exp: "Gross Profit = Revenue − COGS. It measures core production profitability before overhead costs." },
+          { q: "EBITDA adds back Depreciation and Amortization to EBIT because:", opts: ["They are cash expenses","They are non-cash charges that don't represent actual cash outflows","They are illegal to include","They are revenue items"], ans: 1, exp: "D&A are accounting charges, not actual cash payments. Adding them back gives a better sense of cash generation." },
+          { q: "Earnings Per Share (EPS) is calculated as:", opts: ["Net Income × Shares Outstanding","Net Income / Shares Outstanding","Revenue / Shares Outstanding","Gross Profit / Shares Outstanding"], ans: 1, exp: "EPS = Net Income / Shares Outstanding. It shows how much profit is attributable to each share." }
+        ]
+      },
+      {
+        title: "The Balance Sheet",
+        content: `
+          <h2>The Balance Sheet</h2>
+          <p>The <strong>balance sheet</strong> is a financial snapshot of what a company owns (assets), what it owes (liabilities), and what belongs to shareholders (equity) at a specific moment in time.</p>
+          <div class="formula-box">Assets = Liabilities + Shareholders' Equity</div>
+          <p>This equation ALWAYS balances — it's the fundamental accounting equation.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Current Assets</strong><span>Converted to cash within 1 year: cash, accounts receivable, inventory, prepaid expenses.</span></div>
+            <div class="key-term"><strong>Non-Current Assets</strong><span>Long-term assets: property, plant & equipment (PP&E), intangibles, goodwill, long-term investments.</span></div>
+            <div class="key-term"><strong>Current Liabilities</strong><span>Due within 1 year: accounts payable, short-term debt, accrued expenses.</span></div>
+            <div class="key-term"><strong>Non-Current Liabilities</strong><span>Long-term debt, deferred taxes, pension obligations.</span></div>
+          </div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Shareholders' Equity</strong><span>= Assets − Liabilities. What owners would receive if assets were liquidated. Includes common stock, retained earnings.</span></div>
+            <div class="key-term"><strong>Retained Earnings</strong><span>Cumulative net income kept in the business (not paid as dividends). Grows each year with profits.</span></div>
+            <div class="key-term"><strong>Working Capital</strong><span>Current Assets − Current Liabilities. Measures short-term liquidity. Positive = can cover short-term obligations.</span></div>
+            <div class="key-term"><strong>Goodwill</strong><span>Intangible asset from acquisitions — the premium paid above fair value of acquired assets.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "The fundamental accounting equation is:", opts: ["Revenue = Expenses + Profit","Assets = Liabilities + Equity","Cash = Income − Taxes","Debt = Assets − Revenue"], ans: 1, exp: "Assets = Liabilities + Shareholders' Equity. This ALWAYS balances — hence 'balance sheet.'" },
+          { q: "Which of these is a Current Asset?", opts: ["A factory building","Long-term debt","Accounts receivable","Goodwill"], ans: 2, exp: "Accounts receivable (money owed to the company) is a current asset — expected to be collected within a year." },
+          { q: "Working Capital is calculated as:", opts: ["Total Assets − Total Liabilities","Current Assets − Current Liabilities","Revenue − Expenses","Long-term Debt − Cash"], ans: 1, exp: "Working Capital = Current Assets − Current Liabilities. Positive working capital means the company can cover its short-term bills." },
+          { q: "What is 'Goodwill' on a balance sheet?", opts: ["Customer satisfaction score","The premium paid over fair value when acquiring a company","Cash held in reserve","Annual employee bonuses"], ans: 1, exp: "Goodwill = the excess price paid in an acquisition above the fair value of net assets. It's an intangible asset." },
+          { q: "Retained Earnings represents:", opts: ["Dividends paid to shareholders","Cash held in the bank","Cumulative net income kept in the business over time","Total revenue for the year"], ans: 2, exp: "Retained earnings accumulate over the company's life — all profits not paid out as dividends." }
+        ]
+      },
+      {
+        title: "The Cash Flow Statement",
+        content: `
+          <h2>The Cash Flow Statement</h2>
+          <p>A company can be profitable on paper but still run out of cash. The <strong>cash flow statement</strong> tracks actual cash movements, separated into three sections. It's often considered the most important financial statement by analysts.</p>
+          <div class="highlight-box">⚠️ "Revenue is vanity, profit is sanity, but cash is reality." — A company with great profits but no cash can still go bankrupt.</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Operating Activities (CFO)</strong><span>Cash from core business operations. Net income adjusted for non-cash items (D&A) and working capital changes. Most important section.</span></div>
+            <div class="key-term"><strong>Investing Activities (CFI)</strong><span>Cash spent on long-term assets (buying PP&E = CapEx) or received from selling assets. Usually negative for growing companies.</span></div>
+            <div class="key-term"><strong>Financing Activities (CFF)</strong><span>Cash from issuing debt/stock or paying dividends/buybacks. Reflects how the company funds itself.</span></div>
+          </div>
+          <div class="formula-box">Free Cash Flow (FCF) = CFO − Capital Expenditures (CapEx)</div>
+          <p><strong>Free Cash Flow</strong> is what's left after maintaining and growing the business. This is the cash available to pay investors, pay down debt, or reinvest. It's the basis for DCF valuation.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>CapEx</strong><span>Capital Expenditures — money spent on property, plants, equipment. Found in investing activities.</span></div>
+            <div class="key-term"><strong>Non-cash Items</strong><span>Depreciation and amortization are added back to net income in CFO — they're expenses on the P&L but don't actually take cash out.</span></div>
+            <div class="key-term"><strong>Direct vs. Indirect Method</strong><span>Two ways to present CFO. Indirect (more common) starts with net income and adjusts. Direct shows actual cash receipts and payments.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "Which section of the cash flow statement shows cash from a company's core business?", opts: ["Investing Activities","Financing Activities","Operating Activities","Revenue Activities"], ans: 2, exp: "CFO (Cash from Operations) = cash generated from the core business. It's the most critical section." },
+          { q: "Free Cash Flow (FCF) is calculated as:", opts: ["Net Income + Depreciation","Operating Cash Flow − CapEx","Revenue − COGS","EBITDA − Taxes"], ans: 1, exp: "FCF = Operating Cash Flow − Capital Expenditures. It's the cash truly available to investors after reinvestment." },
+          { q: "Why is Depreciation added BACK to Net Income in the operating section?", opts: ["It increases revenue","It's a non-cash expense — no cash actually leaves the company","It reduces taxes","It represents asset purchases"], ans: 1, exp: "Depreciation reduces net income on the P&L, but no cash is paid. Adding it back restores actual cash flow." },
+          { q: "A company reports Net Income of $1M but has negative Operating Cash Flow. This most likely means:", opts: ["The company is growing fast","The company is profitable and healthy","Revenue is being recognized but cash isn't being collected (receivables issue)","The company has too much equity"], ans: 2, exp: "Net income can look great while cash flow suffers if customers aren't paying (high receivables), or inventory is building up." },
+          { q: "Capital Expenditures (CapEx) appear in which section of the cash flow statement?", opts: ["Operating Activities","Investing Activities","Financing Activities","All three sections"], ans: 1, exp: "CapEx is in Investing Activities — it's cash spent on long-term assets like buildings and equipment." }
+        ]
+      },
+      {
+        title: "Financial Ratios & Analysis",
+        content: `
+          <h2>Financial Ratios & Analysis</h2>
+          <p>Financial ratios are the language analysts use to quickly compare companies. They extract meaning from raw numbers and make it possible to compare a $10B company to a $100B company.</p>
+          <p><strong>Liquidity Ratios</strong> — Can the company pay its short-term bills?</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Current Ratio</strong><span>Current Assets / Current Liabilities. >1 is good. Measures ability to cover short-term obligations.</span></div>
+            <div class="key-term"><strong>Quick Ratio</strong><span>(Current Assets − Inventory) / Current Liabilities. Stricter — excludes inventory since it may be hard to sell fast.</span></div>
+          </div>
+          <p><strong>Profitability Ratios</strong> — How efficiently does the company make money?</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Gross Margin</strong><span>Gross Profit / Revenue. Shows core production efficiency. Apple (~43%) vs. Walmart (~25%).</span></div>
+            <div class="key-term"><strong>Net Profit Margin</strong><span>Net Income / Revenue. Overall profitability after everything. Higher = more efficient.</span></div>
+            <div class="key-term"><strong>ROE</strong><span>Return on Equity = Net Income / Shareholders' Equity. How well the company generates profit from equity. Warren Buffett's favorite metric.</span></div>
+            <div class="key-term"><strong>ROA</strong><span>Return on Assets = Net Income / Total Assets. How efficiently assets generate profit.</span></div>
+          </div>
+          <p><strong>Leverage Ratios</strong> — How much debt is the company carrying?</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Debt-to-Equity</strong><span>Total Debt / Total Equity. Higher = more leveraged = more risk.</span></div>
+            <div class="key-term"><strong>Interest Coverage</strong><span>EBIT / Interest Expense. How many times can the company cover its interest payments? >3x is healthy.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "A Current Ratio of 0.7 means:", opts: ["The company is very liquid","The company has 70 cents in current assets for every $1 of current liabilities — a red flag","The company is highly profitable","The debt is low"], ans: 1, exp: "Current Ratio < 1 means current liabilities exceed current assets. The company may struggle to meet short-term obligations." },
+          { q: "ROE (Return on Equity) measures:", opts: ["How liquid the company is","How much revenue the company generates","How efficiently the company generates profit from shareholder equity","How much debt the company uses"], ans: 2, exp: "ROE = Net Income / Equity. It tells you how many dollars of profit the company earns per dollar of equity." },
+          { q: "Which ratio is STRICTER than the Current Ratio?", opts: ["Debt-to-Equity Ratio","Quick Ratio","Interest Coverage Ratio","Net Profit Margin"], ans: 1, exp: "Quick Ratio excludes inventory (harder to liquidate quickly), making it a more conservative liquidity measure." },
+          { q: "Gross Margin = 40% means:", opts: ["40% of revenue becomes net income","40 cents of every revenue dollar remains after paying direct production costs","The company has 40% ROE","40% of assets are financed by equity"], ans: 1, exp: "Gross Margin = Gross Profit / Revenue. 40% means $0.40 of every $1.00 in sales remains after COGS." },
+          { q: "Interest Coverage Ratio of 1.5x means:", opts: ["The company earns 1.5x its interest expense in operating profit — barely covering it","The company has no financial risk","Debt is 1.5x equity","The company pays 1.5% interest"], ans: 0, exp: "1.5x is dangerously low — the company barely covers interest. Analysts prefer 3x+. Below 1x = can't pay interest." }
+        ]
+      }
+    ]
+  }
+  ,
+  {
+    id: 4, title: "Behavioral Finance", icon: "🧠",
+    desc: "Cognitive biases, market psychology, and how professional investors think — the mental edge.",
+    lessons: [
+      {
+        title: "Cognitive Biases That Cost Investors Money",
+        content: `
+          <h2>Cognitive Biases That Cost Investors Money</h2>
+          <p>Finance theory assumes investors are rational. They're not. <strong>Behavioral finance</strong> studies how psychology causes people to make predictably irrational financial decisions — and how professionals avoid these traps.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Loss Aversion</strong><span>Losses feel ~2× more painful than equivalent gains feel good. Causes investors to hold losers too long and sell winners too early. (Kahneman & Tversky)</span></div>
+            <div class="key-term"><strong>Anchoring</strong><span>Over-relying on the first number you see. "I paid $50 — I'll wait until it gets back to $50." The stock doesn't know what you paid.</span></div>
+            <div class="key-term"><strong>Recency Bias</strong><span>Assuming recent trends will continue. Buying after a long bull run, selling after a crash. The opposite of what works.</span></div>
+            <div class="key-term"><strong>Confirmation Bias</strong><span>Seeking information that confirms existing beliefs, ignoring contradictions. Leads to overconfidence and blind spots.</span></div>
+          </div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Overconfidence</strong><span>Most investors believe they're above-average stock pickers. ~90% of active individual investors underperform the market index over 15 years.</span></div>
+            <div class="key-term"><strong>Herding</strong><span>Following the crowd. "Everyone is buying crypto/meme stocks, so should I." Explains bubbles and crashes — price disconnects from fundamentals.</span></div>
+            <div class="key-term"><strong>Mental Accounting</strong><span>Treating money differently based on where it came from. "It's just house money" (gambling winnings) — but a dollar is a dollar regardless of source.</span></div>
+            <div class="key-term"><strong>Sunk Cost Fallacy</strong><span>Continuing an investment because of past losses already incurred. "I've already lost $5K, I can't sell now." Irrelevant to future prospects.</span></div>
+          </div>
+          <div class="highlight-box">🔑 The solution to most biases: <strong>rules-based investing</strong>. Automate contributions, set predetermined sell rules, and remove emotional decision-making from the equation.</div>
+        `,
+        quiz: [
+          { q: "Loss aversion means investors:", opts: ["Avoid all risk entirely","Feel losses ~2× more painfully than equivalent gains feel good","Never sell losing investments","Always buy insurance on investments"], ans: 1, exp: "Kahneman & Tversky proved losses hurt about twice as much as gains feel good — this distorts sell decisions and causes investors to hold losers too long." },
+          { q: "An investor refuses to sell a stock now worth $30 because they paid $50. This is:", opts: ["Recency bias","Herding","Anchoring to the original purchase price","Loss aversion"], ans: 2, exp: "Anchoring = fixating on the original purchase price as a reference point. The stock's future prospects are what matter, not what you paid." },
+          { q: "After stocks rise 50% over 3 years, an investor assumes they'll keep rising. This is:", opts: ["Confirmation bias","Recency bias","Overconfidence","Mental accounting"], ans: 1, exp: "Recency bias = projecting recent trends into the future. This drives investors to buy near market tops — exactly the wrong time." },
+          { q: "Research consistently shows that most active individual investors:", opts: ["Outperform the market by picking good stocks","Match the index after fees","Underperform the market index after fees and behavioral mistakes","Outperform in bull markets but not bear markets"], ans: 2, exp: "~90% of active investors underperform their benchmark over 15+ years. Fees + behavioral mistakes = a losing combination vs. just holding index funds." },
+          { q: "The sunk cost fallacy in investing means:", opts: ["Only investing after thorough research","Holding an investment because of past losses already incurred, not future prospects","Diversifying across asset classes","Selling winners to pay for losers"], ans: 1, exp: "Money already lost is gone — it shouldn't affect future decisions. Holding a bad investment 'to get back to even' is the sunk cost trap." }
+        ]
+      },
+      {
+        title: "Market Psychology & the Emotional Cycle",
+        content: `
+          <h2>Market Psychology & the Emotional Cycle</h2>
+          <p>Markets are driven by emotion in the short term. Understanding the emotional cycle of investing is one of the most valuable edges you can develop — because most investors do the exact opposite of what they should.</p>
+          <div class="highlight-box">📉 The emotional cycle: <strong>Optimism → Excitement → Thrill → Euphoria</strong> (market peak, best time to sell) → Anxiety → Denial → Fear → Panic → <strong>Capitulation</strong> (market bottom, best time to buy) → Hope → Relief → Optimism again.</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Fear & Greed Index</strong><span>CNN's market sentiment gauge (0–100). Below 25 = extreme fear (potential buy signal). Above 75 = extreme greed (caution warranted).</span></div>
+            <div class="key-term"><strong>VIX (Fear Index)</strong><span>Measures expected S&P 500 volatility over the next 30 days. High VIX = high fear. Spikes during crises. Contrarians see high VIX as a buying opportunity.</span></div>
+            <div class="key-term"><strong>Contrarian Investing</strong><span>Deliberately going against crowd sentiment. Buying when others panic, selling when others are euphoric. Uncomfortable — but where the best returns often are.</span></div>
+            <div class="key-term"><strong>Sentiment vs. Fundamentals</strong><span>Short-term: prices are a "voting machine" (emotion). Long-term: prices are a "weighing machine" (fundamentals). — Benjamin Graham.</span></div>
+          </div>
+          <div class="highlight-box">💡 Warren Buffett: <em>"Be fearful when others are greedy, and greedy when others are fearful."</em> The best buying opportunities come when fear is at its peak — which is also when it feels most terrifying to buy.</div>
+          <p>Retail investors consistently <strong>buy near market tops</strong> (euphoria) and <strong>sell near market bottoms</strong> (panic). Studies show the average investor earns significantly less than the market returns of the very funds they invest in — because of bad timing driven by emotion.</p>
+        `,
+        quiz: [
+          { q: "On the emotional investing cycle, most retail investors tend to BUY near:", opts: ["Market bottoms when fear is highest","Market tops during euphoria","Consistent fixed intervals regardless of market","Only during recessions"], ans: 1, exp: "Retail investors are most bullish (and most likely to buy) during euphoria — right near the peak. Studies confirm they earn less than the funds they invest in due to bad timing." },
+          { q: "Warren Buffett's advice on investor behavior is to:", opts: ["Follow the crowd for safety","Be fearful when others are greedy, and greedy when others are fearful","Sell everything at the first sign of a downturn","Only invest when markets are clearly rising"], ans: 1, exp: "Buffett's contrarian wisdom: the best buying opportunities come when fear peaks (market bottoms). Euphoria is the warning signal, not the opportunity." },
+          { q: "A high VIX reading signals:", opts: ["Low market volatility and calm conditions","High investor fear and expected volatility — often a contrarian buy signal","Strong economic growth ahead","Low interest rates"], ans: 1, exp: "VIX spikes during crises (COVID crash, 2008). Contrarians see extreme VIX as a buying signal — when fear peaks, prices are often at their lowest." },
+          { q: "A contrarian investor would most likely:", opts: ["Buy whatever stocks are trending on social media","Buy assets when sentiment is extremely negative and others are panic-selling","Follow momentum and buy recent winners","Sell when markets are rising slowly"], ans: 1, exp: "Contrarians go against the crowd — buying during panic, selling during euphoria. It's psychologically uncomfortable, which is exactly why it works." },
+          { q: "Benjamin Graham's 'voting machine vs. weighing machine' quote means:", opts: ["Elections affect stock prices","Short-term prices reflect emotion; long-term prices reflect business fundamentals","Technical analysis beats fundamental analysis","Market timing is impossible"], ans: 1, exp: "In the short run, the market 'votes' on sentiment. In the long run, it 'weighs' actual business performance. Patient investors exploit this gap." }
+        ]
+      },
+      {
+        title: "The Professional Investor Mindset",
+        content: `
+          <h2>The Professional Investor Mindset</h2>
+          <p>The greatest investors — Buffett, Munger, Lynch, Klarman — share mental frameworks that separate them from everyone else. These aren't strategies; they're ways of thinking about uncertainty, risk, and value.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Circle of Competence</strong><span>Only invest in businesses you genuinely understand. The edge isn't knowing everything — it's knowing what you know and staying within it. Buffett passed on tech for decades because it was outside his circle.</span></div>
+            <div class="key-term"><strong>Mr. Market</strong><span>Benjamin Graham's concept: the market is like a manic-depressive business partner who offers you a price every day. Sometimes irrational. You can accept, refuse, or ignore his offer — never let his mood affect your judgment.</span></div>
+            <div class="key-term"><strong>Margin of Safety</strong><span>Buy assets significantly below their estimated intrinsic value. If you think a stock is worth $100, only buy it at $65. This protects you when your analysis is wrong.</span></div>
+            <div class="key-term"><strong>Process Over Outcome</strong><span>A good investment process can produce a bad outcome (bad luck). Judge decisions on process quality, not just results. One win doesn't make a bad process good.</span></div>
+          </div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Probabilistic Thinking</strong><span>Think in probability distributions, not certainties. "If I'm right 60% of the time and wrong 40%, what's the expected value across all scenarios?"</span></div>
+            <div class="key-term"><strong>Long-Term Orientation</strong><span>Institutions must perform quarterly. Individual investors can hold for decades — patience is the ultimate edge that most professionals can't use.</span></div>
+            <div class="key-term"><strong>Temperament Over IQ</strong><span>Buffett: "Success in investing doesn't correlate with IQ. What you need is the temperament to control the urges that get other people into trouble."</span></div>
+            <div class="key-term"><strong>Second-Order Thinking</strong><span>Ask not just "what happens?" but "then what?" Most investors think one step ahead. Professionals think through the chain of consequences.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "Warren Buffett's 'Circle of Competence' means:", opts: ["Diversify into every sector equally","Only invest in businesses you genuinely understand","Partner with expert investors","Invest only in dividend-paying stocks"], ans: 1, exp: "Know your circle. The edge isn't knowing everything — it's knowing the limits of what you know. Buffett famously passed on tech because it was outside his circle." },
+          { q: "Benjamin Graham's 'Mr. Market' teaches that you should:", opts: ["Follow Mr. Market's daily price recommendations","Focus on intrinsic value and treat Mr. Market's prices as opportunities, not directives","Trade every day based on his offers","Trust that market prices are always correct"], ans: 1, exp: "Mr. Market is irrational. His daily offers are yours to accept or ignore. Never let his mood swings force you into decisions — use his irrationality to your advantage." },
+          { q: "A 'Margin of Safety' means buying assets:", opts: ["Immediately when you identify them","Significantly below their estimated intrinsic value to protect against analysis errors","Only when the market agrees with your valuation","With a stop-loss order in place"], ans: 1, exp: "Buying at a big discount to intrinsic value is your protection against being wrong. The larger the margin of safety, the smaller the risk of permanent loss." },
+          { q: "Buffett says the most important quality for investment success is:", opts: ["Superior IQ and analytical skills","Access to better information than others","Temperament — staying rational when others lose their heads","Speed of execution"], ans: 2, exp: "Buffett explicitly says temperament beats IQ in investing. The ability to stay calm and rational during market chaos is the rarest and most valuable skill." },
+          { q: "Probabilistic thinking in investing means:", opts: ["Making binary yes/no buy/sell decisions","Thinking in expected values across a range of scenarios, not certainties","Only investing in high-certainty situations","Copying strategies that worked recently"], ans: 1, exp: "Professionals think probabilistically: even a 'bad' outcome doesn't mean a 'bad' decision if the process was sound and the odds were favorable." }
+        ]
+      }
+    ]
+  },
+  {
+    id: 5, title: "Macro & Market Cycles", icon: "🌍",
+    desc: "The Federal Reserve, inflation, yield curves, economic cycles, and global markets.",
+    lessons: [
+      {
+        title: "The Federal Reserve & Monetary Policy",
+        content: `
+          <h2>The Federal Reserve & Monetary Policy</h2>
+          <p>The Federal Reserve (the "Fed") is the U.S. central bank. Its decisions move every financial market on the planet. Understanding what the Fed does and why is essential for any finance professional.</p>
+          <div class="highlight-box">📌 The Fed's <strong>Dual Mandate</strong>: (1) Price stability — keep inflation near 2% (2) Maximum sustainable employment. When these conflict, the Fed must choose which to prioritize.</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Federal Funds Rate</strong><span>The interest rate banks charge each other for overnight lending. The Fed's primary policy tool. When the Fed "raises rates," this is what moves — and it ripples through every other rate: mortgages, car loans, credit cards, corporate bonds.</span></div>
+            <div class="key-term"><strong>FOMC</strong><span>Federal Open Market Committee. Meets 8× per year to set the Fed Funds Rate. Their statements are parsed word-by-word by Wall Street.</span></div>
+            <div class="key-term"><strong>Rate Hikes (Tightening)</strong><span>Raise borrowing costs → reduce spending → slow the economy → bring inflation down. Bad for growth stocks (higher discount rate = lower valuations).</span></div>
+            <div class="key-term"><strong>Rate Cuts (Easing)</strong><span>Lower borrowing costs → stimulate spending and investment → boost the economy. Generally good for stocks and bonds.</span></div>
+          </div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Quantitative Easing (QE)</strong><span>The Fed buys bonds from banks, injecting cash into the financial system. Lowers long-term rates. Used during crises (2008, COVID-19). Inflates asset prices.</span></div>
+            <div class="key-term"><strong>Quantitative Tightening (QT)</strong><span>The Fed shrinks its balance sheet by letting bonds mature or selling them. Removes liquidity. Puts upward pressure on rates.</span></div>
+            <div class="key-term"><strong>Forward Guidance</strong><span>The Fed signals future policy intentions to help markets plan. Markets often move on what the Fed says it will do — not just what it does.</span></div>
+            <div class="key-term"><strong>The Fed Put</strong><span>Market belief that the Fed will cut rates or use QE to rescue markets during severe downturns. Creates a moral hazard — investors take more risk knowing the Fed may bail them out.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "The Federal Reserve's dual mandate is:", opts: ["GDP growth and a strong dollar","Price stability (~2% inflation) and maximum employment","Low interest rates and high stock prices","Balanced federal budget and low unemployment"], ans: 1, exp: "The Fed is legally mandated to pursue stable prices (targeting ~2% inflation) and maximum sustainable employment. These two goals sometimes conflict." },
+          { q: "When the Fed RAISES interest rates, what typically happens to growth stock valuations?", opts: ["They rise — higher rates signal a stronger economy","They tend to fall — higher discount rates reduce the present value of future earnings","No effect — stock values are independent of rates","They rise due to reduced inflation expectations"], ans: 1, exp: "Higher rates increase the discount rate in DCF models (WACC rises), making future earnings worth less today. Long-duration growth stocks are hit hardest." },
+          { q: "Quantitative Easing (QE) involves:", opts: ["The government raising taxes to reduce debt","The Fed buying bonds to inject money into the financial system and lower long-term rates","Banks reducing their lending standards","The Treasury printing physical currency"], ans: 1, exp: "QE = Fed buys bonds from banks, giving them cash to deploy. This lowers long-term rates and stimulates the economy — and inflates asset prices." },
+          { q: "The Federal Funds Rate is:", opts: ["The interest rate on 30-year mortgages","The overnight lending rate between banks, set by the Fed, that influences all other interest rates","The annual return guaranteed on Treasury bonds","The rate the government charges on student loans"], ans: 1, exp: "Fed Funds Rate is the benchmark short-term rate. Changes ripple through every other interest rate in the economy — mortgage rates, corporate borrowing, savings accounts." },
+          { q: "During a recession, the Fed's most likely response is to:", opts: ["Raise interest rates to fight inflation","Sell bonds to remove money from the system","Cut interest rates and/or implement QE to stimulate the economy","Raise bank reserve requirements"], ans: 2, exp: "Recessions call for expansionary monetary policy — cutting rates and QE make borrowing cheaper, stimulating spending, hiring, and investment." }
+        ]
+      },
+      {
+        title: "Inflation, Rates & the Yield Curve",
+        content: `
+          <h2>Inflation, Rates & the Yield Curve</h2>
+          <p><strong>Inflation</strong> is the sustained increase in the general price level — it erodes purchasing power. The Fed targets 2% inflation as healthy for growth. Too much is destructive; too little risks deflation.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>CPI</strong><span>Consumer Price Index — tracks a basket of consumer goods. The most-reported inflation measure. Used to adjust Social Security, TIPS, and many contracts.</span></div>
+            <div class="key-term"><strong>PCE</strong><span>Personal Consumption Expenditures — the Fed's preferred inflation gauge. Broader than CPI. The Fed targets Core PCE at ~2%.</span></div>
+            <div class="key-term"><strong>Demand-Pull Inflation</strong><span>Too much money chasing too few goods. Economy overheating. Solution: the Fed raises rates to cool demand.</span></div>
+            <div class="key-term"><strong>Cost-Push Inflation</strong><span>Supply-side shocks raise production costs (oil price spikes, supply chain disruptions). Harder for the Fed to fight — rate hikes slow demand but can't fix supply.</span></div>
+          </div>
+          <div class="formula-box">Real Interest Rate = Nominal Rate − Inflation Rate (Fisher Equation)</div>
+          <p>If you earn 5% in a savings account but inflation is 3%, your <strong>real return is only 2%</strong> — that's all the actual purchasing power you've gained.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Normal Yield Curve</strong><span>Long-term yields > short-term yields. Upward sloping. Reflects healthy economy — investors demand more return for longer commitments.</span></div>
+            <div class="key-term"><strong>Inverted Yield Curve</strong><span>Short-term yields > long-term yields. Has preceded every U.S. recession since the 1960s. Investors flee to long-term bonds for safety, driving long yields down.</span></div>
+            <div class="key-term"><strong>Flat Yield Curve</strong><span>Yields are similar across maturities. Transition state — often between normal and inverted.</span></div>
+            <div class="key-term"><strong>Duration Risk</strong><span>Longer-term bonds are more sensitive to rate changes. If rates rise 1%, a 30-year bond loses far more value than a 2-year bond.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "The Federal Reserve's preferred measure of inflation is:", opts: ["CPI (Consumer Price Index)","PCE (Personal Consumption Expenditures)","PPI (Producer Price Index)","The GDP Deflator"], ans: 1, exp: "The Fed targets Core PCE inflation at ~2%. While CPI is more widely reported in the media, the Fed explicitly states PCE is its primary gauge." },
+          { q: "If your savings account earns 5% but inflation is 3%, your real return is:", opts: ["8%","5%","2%","3%"], ans: 2, exp: "Real Rate = Nominal Rate − Inflation = 5% − 3% = 2%. Inflation erodes purchasing power — what matters is the real return, not the nominal one." },
+          { q: "An inverted yield curve historically signals:", opts: ["Strong economic expansion ahead","A likely recession within 12–18 months","Lower inflation is coming","Higher stock market returns ahead"], ans: 1, exp: "The inverted yield curve has predicted every U.S. recession since the 1960s. Investors pile into long-term bonds for safety, driving long-term yields below short-term ones." },
+          { q: "Cost-push inflation is best described as:", opts: ["Too much consumer spending driving prices up","Supply-side shocks (oil spikes, supply chain issues) raising production costs","Government money printing","Low unemployment causing wage inflation"], ans: 1, exp: "Cost-push = inflation from the supply side. Oil shocks, pandemics, trade disruptions raise costs that businesses pass on to consumers. The Fed can't fix supply with rate hikes." },
+          { q: "When interest rates RISE, what happens to the prices of existing bonds?", opts: ["Prices rise — bonds become more valuable in a high-rate environment","Prices fall — new bonds offer better rates, making existing bonds less attractive","Prices stay fixed — bonds are not affected by rate changes","Prices track the stock market"], ans: 1, exp: "Bond prices and yields move inversely. When rates rise, newly issued bonds pay more, so existing lower-rate bonds are worth less. Duration determines how much prices drop." }
+        ]
+      },
+      {
+        title: "Economic Indicators & Business Cycles",
+        content: `
+          <h2>Economic Indicators & Business Cycles</h2>
+          <p>The economy moves in cycles. Finance professionals use economic indicators to position portfolios ahead of transitions. Understanding where we are in the cycle is one of the most valuable macro skills.</p>
+          <div class="highlight-box">📊 The Business Cycle: <strong>Expansion → Peak → Contraction (Recession) → Trough → Recovery</strong>. Each phase lasts a different amount of time — expansions average ~5 years, recessions ~11 months.</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>GDP</strong><span>Gross Domestic Product — total value of all goods and services produced. Two consecutive quarters of negative GDP growth = official recession definition.</span></div>
+            <div class="key-term"><strong>Leading Indicators</strong><span>Move BEFORE the economy — predictive. Examples: yield curve, stock prices, building permits, manufacturing new orders, consumer confidence.</span></div>
+            <div class="key-term"><strong>Lagging Indicators</strong><span>Confirm trends AFTER they've already happened. Examples: unemployment rate, CPI, corporate profits. Don't use these to predict — they look backward.</span></div>
+            <div class="key-term"><strong>PMI</strong><span>Purchasing Managers Index. Surveys purchasing managers on orders, production, employment. Above 50 = expansion. Below 50 = contraction. Markets watch it closely.</span></div>
+          </div>
+          <p><strong>Sector Rotation</strong> — different industries outperform in different cycle phases:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Early Expansion</strong><span>Financials, real estate, industrials. Credit is cheap, spending ramps up.</span></div>
+            <div class="key-term"><strong>Late Expansion</strong><span>Tech, consumer discretionary. Growth is strong, confidence is high.</span></div>
+            <div class="key-term"><strong>Peak / Contraction</strong><span>Energy, materials. Then shift to defensives: utilities, healthcare, consumer staples. People still need electricity, medicine, and food in a recession.</span></div>
+            <div class="key-term"><strong>Trough / Recovery</strong><span>Financials and cyclicals lead the rebound as credit eases and spending returns.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "A recession is technically defined as:", opts: ["A stock market drop of 20% or more","Two consecutive quarters of negative GDP growth","Unemployment rising above 8%","A banking system crisis"], ans: 1, exp: "Two consecutive quarters of negative real GDP growth is the technical definition. NBER's official declaration uses broader data, but this is the standard taught in every finance class." },
+          { q: "Which type of economic indicator predicts future economic activity?", opts: ["Lagging indicators","Coincident indicators","Leading indicators","Trailing indicators"], ans: 2, exp: "Leading indicators (yield curve, stock prices, building permits) move BEFORE the economy. Unemployment is a lagging indicator — it rises after the recession is already underway." },
+          { q: "During an economic contraction (recession), which sectors typically outperform?", opts: ["Technology and consumer discretionary","Energy and materials","Utilities, healthcare, and consumer staples (defensive sectors)","Financials and industrials"], ans: 2, exp: "Defensive sectors hold up in recessions — people still need electricity, medicine, and food regardless of economic conditions. These companies have stable, predictable earnings." },
+          { q: "A PMI reading of 47 signals:", opts: ["Strong manufacturing expansion","Neutral conditions with no growth","Contraction in manufacturing activity","An imminent stock market crash"], ans: 2, exp: "PMI below 50 = contraction. Above 50 = expansion. A reading of 47 means purchasing managers are seeing declining orders and activity — a warning sign for the economy." },
+          { q: "Sector rotation theory suggests that early in an economic recovery, which sectors tend to lead?", opts: ["Utilities and consumer staples","Healthcare and energy","Financials, industrials, and real estate","Technology and consumer discretionary"], ans: 2, exp: "Early recovery: cheap credit benefits financials, infrastructure spending lifts industrials, and real estate picks up. Tech and discretionary tend to lead later in the expansion." }
+        ]
+      },
+      {
+        title: "Global Markets & Currency",
+        content: `
+          <h2>Global Markets & Currency</h2>
+          <p>Finance is global. Currency movements affect the earnings of every multinational company, the returns of international investors, and the competitiveness of entire economies. Finance professionals must understand these dynamics.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Exchange Rate</strong><span>The price of one currency in terms of another. If USD/EUR = 1.10, one dollar buys €1.10. Rates fluctuate constantly based on interest rate differentials, trade flows, and sentiment.</span></div>
+            <div class="key-term"><strong>Strong Dollar Impact</strong><span>A stronger dollar makes U.S. exports more expensive for foreign buyers (hurts exporters) but makes imports cheaper. Hurts multinational earnings when translated back to USD.</span></div>
+            <div class="key-term"><strong>DXY (Dollar Index)</strong><span>Measures the U.S. dollar against a basket of major currencies (EUR, JPY, GBP, CAD, SEK, CHF). The primary benchmark for dollar strength.</span></div>
+            <div class="key-term"><strong>Safe Haven Currencies</strong><span>USD, Japanese Yen (JPY), Swiss Franc (CHF) — appreciate during global crises as investors flee to safety. Emerging market currencies typically fall during global risk-off periods.</span></div>
+          </div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Emerging Markets (EM)</strong><span>Countries with rapidly developing economies: China, India, Brazil, South Korea. Higher growth potential, higher risk (currency volatility, political instability, lower liquidity).</span></div>
+            <div class="key-term"><strong>Currency Risk</strong><span>When investing internationally, returns are affected by exchange rate movements. A U.S. investor in European stocks gains/loses from both stock price and EUR/USD changes.</span></div>
+            <div class="key-term"><strong>Carry Trade</strong><span>Borrowing in a low-interest-rate currency (JPY) to invest in a higher-rate currency (AUD). Profitable until it unwinds violently during risk-off events.</span></div>
+            <div class="key-term"><strong>Geopolitical Risk</strong><span>Wars, sanctions, elections, and trade disputes create uncertainty that markets hate. Can cause rapid capital flight from affected regions.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "A 'strong dollar' typically:", opts: ["Helps U.S. exporters compete abroad by lowering their prices","Makes U.S. goods more expensive for foreign buyers, hurting U.S. exports","Always boosts the U.S. stock market","Has no impact on multinational corporate earnings"], ans: 1, exp: "Strong dollar = foreign buyers must spend more of their local currency to buy U.S. goods. This makes U.S. exports less competitive and hurts multinational earnings when translated to USD." },
+          { q: "Which currencies are considered 'safe havens' during global crises?", opts: ["Brazilian Real and Turkish Lira","U.S. Dollar, Japanese Yen, and Swiss Franc","Emerging market currencies that offer high yields","Cryptocurrencies like Bitcoin"], ans: 1, exp: "USD, JPY, and CHF are classic safe havens — investors pile into them during crises. Emerging market currencies typically collapse during global risk-off periods." },
+          { q: "If a U.S. company earns most revenue in euros and the dollar strengthens, reported U.S. earnings:", opts: ["Increase — stronger dollar means more purchasing power","Decrease — euro revenues translate to fewer dollars","Stay the same — companies hedge currency risk","Double due to favorable exchange rates"], ans: 1, exp: "Currency translation is a real earnings headwind. Same euros = fewer dollars when translated. A strong dollar is why many multinationals (Apple, McDonald's) warn about 'currency headwinds.'" },
+          { q: "Compared to developed markets, emerging markets typically offer:", opts: ["Lower returns with lower risk","Higher growth potential with higher risk (currency, political, liquidity risk)","Guaranteed government-backed returns","Lower volatility and stable currencies"], ans: 1, exp: "Classic risk/return trade-off: EM countries grow faster (China, India) but carry currency risk, political instability, lower liquidity, and less regulatory transparency." },
+          { q: "The DXY (Dollar Index) measures:", opts: ["U.S. GDP growth relative to other countries","The U.S. dollar's value against a basket of major foreign currencies","U.S. stock market performance vs. global markets","The Federal Reserve's balance sheet size"], ans: 1, exp: "DXY tracks the USD vs. a basket of 6 major currencies (euro has the biggest weight at ~58%). Rising DXY = stronger dollar. Watched closely by commodity traders and multinational CFOs." }
+        ]
+      }
+    ]
+  },
+  {
+    id: 6, title: "Wealth & Professional Mastery", icon: "🚀",
+    desc: "The wealth-building playbook, advanced tax strategy, real estate, and finance career paths.",
+    lessons: [
+      {
+        title: "The Wealth-Building Playbook",
+        content: `
+          <h2>The Wealth-Building Playbook</h2>
+          <p><strong>Net Worth = Total Assets − Total Liabilities.</strong> This is the true measure of financial health — not income. A doctor earning $400K/year with $600K in debt has lower net worth than a teacher who earned $60K/year and saved diligently.</p>
+          <div class="highlight-box">💡 The wealth equation: <strong>Earn More → Spend Less → Save → Invest → Compound → Repeat.</strong> The savings rate is the most powerful variable early on — it dwarfs the impact of investment returns when your portfolio is small.</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Rule of 72</strong><span>Divide 72 by your annual return rate to estimate how many years to double your money. At 8%: 72÷8 = 9 years. At 6%: 12 years. At 12%: 6 years. Makes compounding intuitive.</span></div>
+            <div class="key-term"><strong>The 4% Rule (25× Rule)</strong><span>Based on the Trinity Study: a diversified portfolio can sustain 4% annual withdrawals indefinitely. Retirement number = Annual expenses × 25. Need $60K/year? Save $1.5M.</span></div>
+            <div class="key-term"><strong>FIRE Movement</strong><span>Financial Independence, Retire Early. High savings rates (40–70%+) to reach financial independence faster. The math: save more → reach your number sooner.</span></div>
+            <div class="key-term"><strong>Wealth-Building Sequence</strong><span>1) Emergency fund → 2) 401k to full employer match → 3) Pay off high-interest debt → 4) Max Roth IRA → 5) Max 401k → 6) Taxable brokerage investing.</span></div>
+          </div>
+          <p>Why <strong>starting early</strong> matters more than anything else:</p>
+          <div class="highlight-box">⏰ $5,000 invested at age 22 at 8% = <strong>$160,000</strong> by age 62. The same $5,000 invested at age 32 = only $74,000. Ten years costs you $86,000 — time is the most valuable asset in wealth building.</div>
+        `,
+        quiz: [
+          { q: "What is the most accurate measure of someone's financial health?", opts: ["Their annual income","Their credit score","Their net worth (total assets minus total liabilities)","Their home value"], ans: 2, exp: "Net Worth = Assets − Liabilities. High income means nothing if expenses and debt are higher. Net worth tracks actual financial progress over time." },
+          { q: "Using the Rule of 72, at a 9% annual return, your money doubles in approximately:", opts: ["9 years","8 years","72 years","6 years"], ans: 1, exp: "72 ÷ 9 = 8 years. Simple and useful: at 6% it takes 12 years, at 12% just 6 years. Shows why higher returns matter so much over long time horizons." },
+          { q: "According to the 4% Rule, if you need $80,000 per year in retirement, you need approximately:", opts: ["$800,000","$1,600,000","$2,000,000","$3,200,000"], ans: 2, exp: "$80,000 × 25 = $2,000,000. The 4% Rule says a diversified portfolio of this size can sustain $80K/year withdrawals indefinitely based on historical market returns." },
+          { q: "Early in your career, which factor has the BIGGEST impact on wealth accumulation?", opts: ["Picking the highest-return investments","Your savings rate — how much you invest each month","Timing the market correctly","Choosing the right brokerage platform"], ans: 1, exp: "When your portfolio is small, the amount you save and invest each month dominates everything. A 5% return difference on $10K is $500 — but saving an extra $500/month is transformational." },
+          { q: "In the optimal wealth-building sequence, what should you do FIRST after building your emergency fund?", opts: ["Open a taxable brokerage account","Invest in real estate","Capture your full employer 401(k) match — it's a guaranteed 50–100% instant return","Pay off all debt including low-interest student loans"], ans: 2, exp: "Employer matching is a guaranteed 50–100% return on your contribution. It's the highest guaranteed return available anywhere. Never leave this money on the table." }
+        ]
+      },
+      {
+        title: "Advanced Tax Strategy",
+        content: `
+          <h2>Advanced Tax Strategy</h2>
+          <p>Taxes are the single largest expense most high earners face. Professionals don't just earn more — they keep more through smart tax strategy. Over a lifetime, tax optimization can be worth hundreds of thousands of dollars.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Tax-Loss Harvesting</strong><span>Sell investments at a loss to realize a tax loss that offsets capital gains (or up to $3K of ordinary income). Then immediately reinvest in a similar (not identical) asset to maintain market exposure.</span></div>
+            <div class="key-term"><strong>Wash-Sale Rule</strong><span>You can't repurchase the same or "substantially identical" security within 30 days before or after selling at a loss. The IRS disallows the tax benefit if you do.</span></div>
+            <div class="key-term"><strong>Long-Term Capital Gains</strong><span>Hold investments >1 year: taxed at 0%, 15%, or 20%. Hold <1 year: taxed as ordinary income (up to 37%). Always try to cross the 1-year threshold before selling.</span></div>
+            <div class="key-term"><strong>Asset Location</strong><span>Put the right investments in the right accounts. Bonds and REITs (taxed heavily) → tax-advantaged accounts. Index funds and growth stocks → taxable accounts for tax efficiency.</span></div>
+          </div>
+          <div class="key-terms">
+            <div class="key-term"><strong>HSA (Triple Tax Advantage)</strong><span>Contributions are pre-tax. Growth is tax-free. Withdrawals for medical expenses are tax-free. After 65, works like a Traditional IRA. The most tax-advantaged account that exists.</span></div>
+            <div class="key-term"><strong>Backdoor Roth IRA</strong><span>High earners above the Roth income limit: contribute to a non-deductible Traditional IRA, then immediately convert to Roth. Perfectly legal. Builds tax-free wealth regardless of income.</span></div>
+            <div class="key-term"><strong>Roth Conversion Ladder</strong><span>Strategically convert Traditional IRA → Roth during low-income years (e.g., early retirement, gap year) to build tax-free wealth while in a lower bracket.</span></div>
+            <div class="key-term"><strong>529 Plans</strong><span>Tax-advantaged college savings. Contributions grow tax-free when used for qualified education expenses. Many states offer a state tax deduction on contributions.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "Tax-loss harvesting involves:", opts: ["Avoiding all capital gains taxes permanently","Selling losing investments to realize losses that offset gains, then reinvesting in similar assets","Putting all investments in a Roth IRA","Delaying all investing until a lower tax bracket"], ans: 1, exp: "Tax-loss harvesting = intentionally sell underwater positions to generate a tax loss. Use those losses to offset gains (or up to $3K of ordinary income). Reinvest in a similar position to stay exposed." },
+          { q: "The Wash-Sale Rule means you cannot:", opts: ["Harvest losses more than three times per year","Buy back the same or substantially identical security within 30 days of selling it at a loss","Contribute to both a 401k and IRA in the same year","Use losses to offset more than $3,000 of ordinary income"], ans: 1, exp: "Buy the same stock back within 30 days? The IRS disallows the tax loss. The solution: reinvest in a similar but not identical ETF or security to maintain exposure while keeping the loss." },
+          { q: "Why is an HSA called a 'triple tax advantage' account?", opts: ["It saves money on three types of bills","Contributions are pre-tax, growth is tax-free, AND qualified withdrawals are tax-free","It beats 401k, IRA, and brokerage accounts combined in every way","It reduces three types of taxes in the same year"], ans: 1, exp: "HSA is uniquely powerful: pre-tax contributions, tax-free growth, tax-free medical withdrawals. After 65 it works like a Traditional IRA. Maximize your HSA before taxable investing." },
+          { q: "To qualify for the lower long-term capital gains tax rate, you must hold an investment for:", opts: ["At least 6 months","At least 1 year","At least 2 years","At least 5 years"], ans: 1, exp: "Hold >1 year = long-term capital gains: taxed at 0%, 15%, or 20%. Hold <1 year = short-term: taxed as ordinary income up to 37%. The 1-year threshold is one of the most important in tax strategy." },
+          { q: "The Backdoor Roth IRA strategy is designed for:", opts: ["Low-income investors who can't afford Roth contributions","People who want to avoid all taxes on investments","High earners above the income limit for direct Roth IRA contributions","Retirees converting their 401k"], ans: 2, exp: "Above ~$161K (single) or ~$240K (married) in 2024, you can't contribute directly to a Roth IRA. The backdoor: contribute to a Traditional IRA (non-deductible), then convert to Roth immediately. Legal and powerful." }
+        ]
+      },
+      {
+        title: "Real Estate Fundamentals",
+        content: `
+          <h2>Real Estate Fundamentals</h2>
+          <p>Real estate is one of the primary wealth-building vehicles of the ultra-wealthy. It combines four return drivers that no other asset class offers simultaneously: <strong>cash flow, appreciation, equity paydown by tenants, and tax benefits.</strong></p>
+          <div class="key-terms">
+            <div class="key-term"><strong>NOI (Net Operating Income)</strong><span>Gross Rental Income − Operating Expenses (NOT including mortgage payments). The core cash flow metric for any investment property.</span></div>
+            <div class="key-term"><strong>Cap Rate</strong><span>NOI / Property Value. Measures the unlevered yield on a property. A 6% cap rate on a $500K property = $30K NOI. Higher cap = higher yield (usually in riskier markets).</span></div>
+            <div class="key-term"><strong>Cash-on-Cash Return</strong><span>Annual Cash Flow (after mortgage) / Total Cash Invested. Measures your actual return on the dollars you put in. Includes the effect of leverage.</span></div>
+            <div class="key-term"><strong>GRM (Gross Rent Multiplier)</strong><span>Purchase Price / Annual Gross Rent. Quick screening tool. Lower is better. A 10 GRM = price is 10× annual gross rent.</span></div>
+          </div>
+          <div class="highlight-box">⚡ The Power of Leverage: Put $200K down on a $1M property. If it appreciates 10% ($100K gain), that's a <strong>50% return on your cash</strong> — not 10%. Real estate leverage amplifies returns (and losses).</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>REITs</strong><span>Real Estate Investment Trusts — publicly traded companies owning properties. Must distribute 90%+ of taxable income as dividends. Provides real estate exposure without owning property.</span></div>
+            <div class="key-term"><strong>1031 Exchange</strong><span>Sell a property and defer capital gains taxes by rolling proceeds into a "like-kind" property within 180 days. Wealthy investors use this to compound tax-deferred returns indefinitely.</span></div>
+            <div class="key-term"><strong>Depreciation</strong><span>The IRS lets you deduct the "depreciation" of a building over 27.5 years (residential) — even while it appreciates. Significantly reduces taxable rental income.</span></div>
+            <div class="key-term"><strong>DSCR (Debt Service Coverage)</strong><span>NOI / Annual Debt Payments. Lenders require DSCR >1.2–1.25×. Below 1.0 means the property doesn't generate enough income to cover its mortgage.</span></div>
+          </div>
+        `,
+        quiz: [
+          { q: "The Cap Rate of a property is calculated as:", opts: ["Purchase Price / Annual Rent","NOI / Property Value","Annual Cash Flow / Down Payment","Gross Rent / Operating Expenses"], ans: 1, exp: "Cap Rate = Net Operating Income / Property Value. A $60K NOI on a $1M property = 6% cap rate. Used to compare investment properties regardless of financing." },
+          { q: "Which of the following is NOT one of the four pillars of real estate returns?", opts: ["Cash flow from rent","Property appreciation over time","Tax benefits like depreciation","Correlation with stock market movements"], ans: 3, exp: "The four pillars: cash flow, appreciation, equity paydown (tenants pay your mortgage), and tax benefits (depreciation, deductions). Low stock correlation is a bonus feature, not a core return driver." },
+          { q: "A 1031 Exchange allows a real estate investor to:", opts: ["Convert a rental property to a primary residence tax-free","Defer capital gains taxes by reinvesting proceeds into a like-kind property within 180 days","Deduct all renovation costs immediately","Eliminate property taxes permanently"], ans: 1, exp: "1031 exchanges let investors defer capital gains indefinitely by rolling into similar properties. Do this repeatedly and you defer taxes for life — a massive wealth-building tool for serious RE investors." },
+          { q: "How does leverage amplify returns in real estate?", opts: ["By reducing property operating expenses","By allowing you to control a much larger asset with a fraction of the total value as your cash investment","By guaranteeing property appreciation","By eliminating the need to pay income taxes"], ans: 1, exp: "20% down controls 100% of an asset. 10% appreciation on the full property = 50% return on your cash. Leverage is the core reason real estate builds wealth faster than many other assets." },
+          { q: "REITs (Real Estate Investment Trusts) are required to distribute at least what percentage of taxable income as dividends?", opts: ["50%","75%","90%","100%"], ans: 2, exp: "REITs must pay out 90%+ of taxable income as dividends — this is what makes them high-yield income investments. In exchange, they pay little to no corporate tax. You get the real estate income without owning property." }
+        ]
+      },
+      {
+        title: "Finance Careers & Professional Skills",
+        content: `
+          <h2>Finance Careers & Professional Skills</h2>
+          <p>Finance is one of the highest-paying and most competitive fields in the world. Understanding the landscape — what each role does, what skills it requires, and how to break in — gives you a massive advantage before you even start at Clemson.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Investment Banking (IB)</strong><span>Advises companies on M&A, IPOs, and capital raises. Known for brutal hours (80–100h/week), elite pay ($150K–$300K+ all-in as analyst), and strong exit opportunities to PE and HF.</span></div>
+            <div class="key-term"><strong>Private Equity (PE)</strong><span>Buys companies using leveraged buyouts (LBOs), improves operations, and sells for profit. The most selective career in finance. Compensation: base + "carry" (% of investment profits).</span></div>
+            <div class="key-term"><strong>Hedge Funds (HF)</strong><span>Pooled funds using diverse strategies (long/short equity, macro, quant). "2 and 20" fee structure: 2% of AUM annually + 20% of profits. Extremely selective, extremely high upside.</span></div>
+            <div class="key-term"><strong>Asset Management</strong><span>Managing investment portfolios for institutions and individuals. Better work-life balance than IB. Focus: investment analysis, portfolio construction, client relationships.</span></div>
+          </div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Corporate Finance / FP&A</strong><span>Working inside a company doing financial planning, budgeting, forecasting. Clear path to CFO. Great work-life balance. Valued at every company — not just financial firms.</span></div>
+            <div class="key-term"><strong>Key Credentials</strong><span>CFA (Chartered Financial Analyst) — gold standard for investment roles. CPA — essential for accounting-heavy positions. MBA — career pivot/acceleration tool. Pick based on your path.</span></div>
+            <div class="key-term"><strong>Technical Skills That Get You Hired</strong><span>Advanced Excel & financial modeling, DCF from scratch, accounting (3-statement linkage), valuation (comps, precedents), SQL (increasingly required). Build these before senior year.</span></div>
+            <div class="key-term"><strong>Networking Reality</strong><span>70–80% of finance jobs are filled through relationships — not job boards. Start building your network at Clemson now: finance club, alumni outreach, LinkedIn, cold emails, coffee chats.</span></div>
+          </div>
+          <div class="highlight-box">🏆 The interview question that matters most: "Walk me through a DCF." If you can build one from scratch and explain every input, you'll outperform 90% of candidates at every level.</div>
+        `,
+        quiz: [
+          { q: "Investment banking analysts primarily help companies with:", opts: ["Day-to-day accounting and bookkeeping","Mergers & acquisitions, IPOs, debt offerings, and raising capital","Managing investment portfolios for retail clients","Setting central bank monetary policy"], ans: 1, exp: "IB is a pure advisory business. Bankers advise on the biggest financial transactions companies ever do: selling themselves, merging, going public, or raising billions in debt or equity." },
+          { q: "In Private Equity, a Leveraged Buyout (LBO) involves:", opts: ["Buying a company's publicly traded bonds","Acquiring a company using significant debt financing to amplify equity returns","Shorting stocks of struggling companies","Issuing new equity to fund company acquisitions"], ans: 1, exp: "LBOs use mostly debt (70–80%) to acquire companies. The acquired company's own cash flows service the debt, and equity returns are amplified enormously when sold 5–7 years later." },
+          { q: "The '2 and 20' hedge fund fee structure means:", opts: ["2% performance fee and 20% management fee","2% annual management fee on AUM plus 20% of investment profits","20% fee in year one, 2% thereafter","A fund with 2 managers and 20 analysts"], ans: 1, exp: "'2 and 20': 2% of assets under management annually (whether they make money or not) + 20% of any profits generated. This is how hedge fund managers build enormous personal wealth." },
+          { q: "The CFA (Chartered Financial Analyst) designation is most valued in:", opts: ["Investment banking and M&A advisory","Corporate financial planning and analysis","Asset management, investment research, and portfolio management","Real estate investment"], ans: 2, exp: "CFA is the gold standard for investment professionals — portfolio managers, equity analysts, and wealth managers prize it. In investment banking, the MBA is more valued. Pick credentials based on your target role." },
+          { q: "The most important technical skill to demonstrate in a finance interview is:", opts: ["Advanced PowerPoint design for pitch books","Financial modeling — especially building a DCF and explaining how the 3 financial statements link","Memorizing current stock prices and market movements","Social media and digital marketing skills"], ans: 1, exp: "Walk me through a DCF. How do the 3 statements link? Walk me through an LBO. These questions separate prepared candidates from everyone else. If you can model fluently, you can compete anywhere." }
+        ]
+      }
+    ]
+  }
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+const DEFAULT_STATE = {
+  xp: 0, streak: 0, lastDate: null,
+  hearts: 5, maxHearts: 5,
+  completed: {}, // { "modId-lessonIdx": { score, total, xpEarned } }
+  missed: {},    // { "modId-lessonIdx": [qIdx, ...] }
+};
+
+let state = JSON.parse(localStorage.getItem('fa_state') || 'null') || { ...DEFAULT_STATE };
+if (!state.missed) state.missed = {}; // migrate old saves
+let session = { modId: null, lessonIdx: null, step: 0, score: 0, wrong: 0, hearts: 5 };
+
+function save() { localStorage.setItem('fa_state', JSON.stringify(state)); }
+
+function lessonKey(mId, lIdx) { return `${mId}-${lIdx}`; }
+function isDone(mId, lIdx) { return !!state.completed[lessonKey(mId, lIdx)]; }
+function isModUnlocked(mId) { return mId === 0 || allLessonsDone(mId - 1); }
+function allLessonsDone(mId) {
+  return CURRICULUM[mId].lessons.every((_, i) => isDone(mId, i));
+}
+function nextLesson(mId) {
+  return CURRICULUM[mId].lessons.findIndex((_, i) => !isDone(mId, i));
+}
+
+// ─── STREAK ──────────────────────────────────────────────────────────────────
+function checkStreak() {
+  const today = new Date().toDateString();
+  if (state.lastDate === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if (state.lastDate === yesterday) { state.streak++; }
+  else if (state.lastDate !== today) { state.streak = 1; }
+  state.lastDate = today;
+  save();
+}
+checkStreak();
+
+// ─── UI HELPERS ──────────────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function updateNav() {
+  document.getElementById('nav-streak').textContent = state.streak;
+  document.getElementById('nav-xp').textContent = state.xp;
+  const h = session.hearts;
+  document.getElementById('nav-hearts').textContent = '❤️'.repeat(h) + ('🖤'.repeat(Math.max(0, state.maxHearts - h)));
+}
+
+function updateHomeXP() {
+  const level = Math.floor(state.xp / 500) + 1;
+  const levelXP = state.xp % 500;
+  document.getElementById('home-level').textContent = level;
+  document.getElementById('home-xp-label').textContent = `${levelXP} / 500 XP`;
+  document.getElementById('home-xp-bar').style.width = (levelXP / 500 * 100) + '%';
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function refillHearts() { session.hearts = state.maxHearts; updateNav(); renderHearts(); closeModal('modal-nolives'); }
+
+// ─── HOME ────────────────────────────────────────────────────────────────────
+function getMissedCount() {
+  return Object.values(state.missed).reduce((a, b) => a + b.length, 0);
+}
+
+function moduleAccuracy(mId) {
+  const mod = CURRICULUM[mId];
+  let totalScore = 0, totalQ = 0;
+  mod.lessons.forEach((l, i) => {
+    const c = state.completed[lessonKey(mId, i)];
+    if (c) { totalScore += c.score; totalQ += c.total; }
+  });
+  return totalQ > 0 ? Math.round(totalScore / totalQ * 100) : null;
+}
+
+function renderHome() {
+  updateHomeXP(); updateNav();
+  const grid = document.getElementById('modules-grid');
+  grid.innerHTML = '';
+
+  // Review session card
+  const missed = getMissedCount();
+  if (missed > 0) {
+    const rc = document.createElement('div');
+    rc.className = 'module-card review-card';
+    rc.innerHTML = `
+      <div class="review-card-icon">📝</div>
+      <div class="review-card-info">
+        <h2>Review Session</h2>
+        <p>You have questions to review — knock them out to lock in the knowledge.</p>
+      </div>
+      <div class="review-badge">${missed} to review</div>
+    `;
+    rc.addEventListener('click', startReviewSession);
+    grid.appendChild(rc);
+  }
+  CURRICULUM.forEach(mod => {
+    const unlocked = isModUnlocked(mod.id);
+    const doneCount = mod.lessons.filter((_, i) => isDone(mod.id, i)).length;
+    const total = mod.lessons.length;
+    const pct = Math.round(doneCount / total * 100);
+    const next = nextLesson(mod.id);
+
+    const card = document.createElement('div');
+    card.className = `module-card mod-${mod.id}${unlocked ? '' : ' locked'}${doneCount === total ? ' completed' : ''}`;
+    card.innerHTML = `
+      ${!unlocked ? '<div class="lock-badge">🔒</div>' : ''}
+      <div class="module-header">
+        <div class="module-icon">${mod.icon}</div>
+        <div class="module-info">
+          <h2>${mod.title}</h2>
+          <p>${mod.desc}</p>
+        </div>
+      </div>
+      <div class="module-progress-bar"><div class="module-progress-fill" style="width:${pct}%"></div></div>
+      <div class="module-progress-label">
+        <span>${doneCount}/${total} lessons complete${(() => { const acc = moduleAccuracy(mod.id); if (acc === null) return ''; const cls = acc >= 80 ? 'good' : acc >= 60 ? 'ok' : 'low'; return `<span class="accuracy-badge ${cls}">${acc}% accuracy</span>`; })()}</span>
+        <span>${pct}%</span>
+      </div>
+      <div class="lesson-dots">
+        ${mod.lessons.map((l, i) => {
+          const done = isDone(mod.id, i);
+          const isCurrent = unlocked && !done && i === next;
+          const isLocked = !unlocked || (!done && i > next);
+          let cls = done ? 'done' : isCurrent ? 'current' : 'locked-dot';
+          return `<div class="lesson-dot ${cls}" title="${l.title}" onclick="${unlocked && !isLocked ? `startLesson(${mod.id},${i})` : ''}">${done ? '✓' : i + 1}</div>`;
+        }).join('')}
+      </div>
+    `;
+    if (unlocked) card.addEventListener('click', (e) => {
+      if (e.target.classList.contains('lesson-dot')) return;
+      const n = nextLesson(mod.id);
+      if (n >= 0) startLesson(mod.id, n);
+    });
+    grid.appendChild(card);
+  });
+}
+
+// ─── LESSON ──────────────────────────────────────────────────────────────────
+function startLesson(modId, lessonIdx) {
+  session = { modId, lessonIdx, step: 0, score: 0, wrong: 0, hearts: state.hearts };
+  session.hearts = Math.min(session.hearts, state.maxHearts);
+  if (session.hearts <= 0) { openModal('modal-nolives'); return; }
+  showScreen('lesson');
+  renderLessonStep();
+}
+
+function renderLessonStep() {
+  const mod = CURRICULUM[session.modId];
+  const lesson = mod.lessons[session.lessonIdx];
+  const totalSteps = 1 + lesson.quiz.length; // content + quiz questions
+  const pct = session.step / totalSteps * 100;
+  document.getElementById('lesson-progress-fill').style.width = pct + '%';
+  renderHearts();
+  updateNav();
+
+  const body = document.getElementById('lesson-body');
+
+  if (session.step === 0) {
+    // Content
+    body.innerHTML = `
+      <div class="lesson-title">${mod.title} · Lesson ${session.lessonIdx + 1}</div>
+      <div class="lesson-content-card">${lesson.content}</div>
+      <button class="continue-btn green" onclick="advanceStep()">Start Quiz →</button>
+    `;
+  } else {
+    // Quiz
+    const qIdx = session.step - 1;
+    const q = lesson.quiz[qIdx];
+    body.innerHTML = `
+      <div class="lesson-title">Question ${qIdx + 1} of ${lesson.quiz.length}</div>
+      <div class="quiz-question">${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((o, i) => `<button class="quiz-option" onclick="selectAnswer(${i})">${o}</button>`).join('')}
+      </div>
+      <div class="feedback-bar" id="feedback"></div>
+      <button class="continue-btn blue" id="continue-quiz-btn" style="display:none" onclick="advanceStep()">Continue</button>
+    `;
+  }
+}
+
+function renderHearts() {
+  const d = document.getElementById('hearts-display');
+  if (!d) return;
+  let h = '';
+  for (let i = 0; i < state.maxHearts; i++) {
+    h += `<span class="heart${i >= session.hearts ? ' lost' : ''}">❤️</span>`;
+  }
+  d.innerHTML = h;
+}
+
+function selectAnswer(idx) {
+  const lesson = CURRICULUM[session.modId].lessons[session.lessonIdx];
+  const qIdx = session.step - 1;
+  const q = lesson.quiz[qIdx];
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.disabled = true);
+  const correct = idx === q.ans;
+  opts[idx].classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) opts[q.ans].classList.add('correct');
+
+  const fb = document.getElementById('feedback');
+  fb.className = `feedback-bar show ${correct ? 'correct-fb' : 'wrong-fb'}`;
+  fb.innerHTML = `
+    <div class="feedback-icon">${correct ? '🎉' : '❌'}</div>
+    <div class="feedback-text">
+      <strong>${correct ? 'Correct!' : 'Not quite!'}</strong>
+      <span>${q.exp}</span>
+    </div>
+  `;
+
+  const key = lessonKey(session.modId, session.lessonIdx);
+  if (correct) {
+    session.score++;
+    // Remove from missed pile if it was there
+    if (state.missed[key]) {
+      state.missed[key] = state.missed[key].filter(i => i !== qIdx);
+      if (state.missed[key].length === 0) delete state.missed[key];
+    }
+  } else {
+    session.wrong++;
+    session.hearts = Math.max(0, session.hearts - 1);
+    // Add to missed pile
+    if (!state.missed[key]) state.missed[key] = [];
+    if (!state.missed[key].includes(qIdx)) state.missed[key].push(qIdx);
+    renderHearts();
+    updateNav();
+  }
+
+  document.getElementById('continue-quiz-btn').style.display = 'block';
+}
+
+function advanceStep() {
+  const lesson = CURRICULUM[session.modId].lessons[session.lessonIdx];
+  session.step++;
+  if (session.step > lesson.quiz.length) {
+    finishLesson();
+  } else {
+    renderLessonStep();
+  }
+}
+
+function confirmBack() {
+  if (confirm('Leave this lesson? Your progress in this quiz will be lost.')) {
+    showScreen('home'); renderHome();
+  }
+}
+
+// ─── FINISH ──────────────────────────────────────────────────────────────────
+function finishLesson() {
+  const lesson = CURRICULUM[session.modId].lessons[session.lessonIdx];
+  const total = lesson.quiz.length;
+  const score = session.score;
+  const pct = Math.round(score / total * 100);
+  const xpEarned = score * 20 + (pct === 100 ? 50 : 0); // bonus for perfect
+
+  // Save
+  const key = lessonKey(session.modId, session.lessonIdx);
+  const prev = state.completed[key];
+  if (!prev || xpEarned > prev.xpEarned) {
+    state.completed[key] = { score, total, xpEarned };
+    state.xp += prev ? Math.max(0, xpEarned - prev.xpEarned) : xpEarned;
+  }
+  state.hearts = session.hearts;
+  save();
+
+  // Confetti if decent score
+  if (pct >= 60) launchConfetti();
+
+  const trophy = pct === 100 ? '🏆' : pct >= 80 ? '🎉' : pct >= 60 ? '👍' : '📚';
+  const msg = pct === 100 ? 'Perfect score!' : pct >= 80 ? 'Great work!' : pct >= 60 ? 'Good effort!' : 'Keep practicing!';
+
+  showScreen('complete');
+  document.getElementById('complete-body').innerHTML = `
+    <div class="trophy">${trophy}</div>
+    <h2>${msg}</h2>
+    <p>${lesson.title} — ${score}/${total} correct</p>
+    <div class="xp-earned">⭐ +${xpEarned} XP earned</div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="val" style="color:var(--green)">${score}/${total}</div><div class="lbl">Score</div></div>
+      <div class="stat-box"><div class="val" style="color:var(--yellow-dark)">${pct}%</div><div class="lbl">Accuracy</div></div>
+      <div class="stat-box"><div class="val" style="color:var(--red)">${session.wrong}</div><div class="lbl">Mistakes</div></div>
+    </div>
+    <button class="continue-btn green" onclick="showScreen('home');renderHome()">Back to Home</button>
+    ${nextLessonBtn()}
+  `;
+  updateNav(); updateHomeXP();
+}
+
+function nextLessonBtn() {
+  const mod = CURRICULUM[session.modId];
+  const nextIdx = session.lessonIdx + 1;
+  if (nextIdx < mod.lessons.length) {
+    return `<button class="continue-btn blue" style="margin-top:12px" onclick="startLesson(${session.modId},${nextIdx})">Next Lesson →</button>`;
+  }
+  const nextMod = session.modId + 1;
+  if (nextMod < CURRICULUM.length) {
+    return `<button class="continue-btn blue" style="margin-top:12px" onclick="showScreen('home');renderHome()">Next Module 🎓</button>`;
+  }
+  return `<p style="margin-top:16px;font-weight:700;color:var(--green)">🎓 You've completed all modules! Clemson is going to be a breeze.</p>`;
+}
+
+// ─── CONFETTI ────────────────────────────────────────────────────────────────
+function launchConfetti() {
+  const container = document.getElementById('confetti-container');
+  const colors = ['#58cc02','#ffc800','#1cb0f6','#ff4b4b','#ce82ff','#ff9600'];
+  for (let i = 0; i < 80; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;
+      animation-duration:${1.5+Math.random()*2}s;
+      animation-delay:${Math.random()*0.5}s;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+    `;
+    container.appendChild(p);
+    setTimeout(() => p.remove(), 3500);
+  }
+}
+
+// ─── REVIEW MODE ─────────────────────────────────────────────────────────────
+function startReviewSession() {
+  const queue = [];
+  Object.entries(state.missed).forEach(([key, qIdxs]) => {
+    const [modId, lessonIdx] = key.split('-').map(Number);
+    qIdxs.forEach(qIdx => queue.push({ modId, lessonIdx, qIdx }));
+  });
+  if (queue.length === 0) return;
+  // Shuffle
+  queue.sort(() => Math.random() - 0.5);
+  session = { modId: null, lessonIdx: null, step: 0, score: 0, wrong: 0, hearts: state.maxHearts, isReview: true, reviewQueue: queue, reviewIdx: 0 };
+  showScreen('lesson');
+  renderReviewQuestion();
+}
+
+function renderReviewQuestion() {
+  const queue = session.reviewQueue;
+  if (session.reviewIdx >= queue.length) { finishReview(); return; }
+  const { modId, lessonIdx, qIdx } = queue[session.reviewIdx];
+  const mod = CURRICULUM[modId];
+  const lesson = mod.lessons[lessonIdx];
+  const q = lesson.quiz[qIdx];
+  const pct = session.reviewIdx / queue.length * 100;
+  document.getElementById('lesson-progress-fill').style.width = pct + '%';
+  document.getElementById('hearts-display').innerHTML = '';
+  updateNav();
+  const body = document.getElementById('lesson-body');
+  body.innerHTML = `
+    <div class="lesson-title">📝 Review · ${lesson.title}</div>
+    <div class="quiz-question">${q.q}</div>
+    <div class="quiz-options">
+      ${q.opts.map((o, i) => `<button class="quiz-option" onclick="selectReviewAnswer(${i})">${o}</button>`).join('')}
+    </div>
+    <div class="feedback-bar" id="feedback"></div>
+    <button class="continue-btn blue" id="continue-quiz-btn" style="display:none" onclick="advanceReview()">Continue</button>
+  `;
+}
+
+function selectReviewAnswer(idx) {
+  const { modId, lessonIdx, qIdx } = session.reviewQueue[session.reviewIdx];
+  const q = CURRICULUM[modId].lessons[lessonIdx].quiz[qIdx];
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.disabled = true);
+  const correct = idx === q.ans;
+  opts[idx].classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) opts[q.ans].classList.add('correct');
+  const fb = document.getElementById('feedback');
+  fb.className = `feedback-bar show ${correct ? 'correct-fb' : 'wrong-fb'}`;
+  fb.innerHTML = `
+    <div class="feedback-icon">${correct ? '🎉' : '❌'}</div>
+    <div class="feedback-text">
+      <strong>${correct ? 'Got it!' : 'Not quite!'}</strong>
+      <span>${q.exp}</span>
+    </div>
+  `;
+  const key = lessonKey(modId, lessonIdx);
+  if (correct) {
+    session.score++;
+    if (state.missed[key]) {
+      state.missed[key] = state.missed[key].filter(i => i !== qIdx);
+      if (state.missed[key].length === 0) delete state.missed[key];
+    }
+  } else {
+    session.wrong++;
+  }
+  save();
+  document.getElementById('continue-quiz-btn').style.display = 'block';
+}
+
+function advanceReview() {
+  session.reviewIdx++;
+  renderReviewQuestion();
+}
+
+function finishReview() {
+  const total = session.reviewQueue.length;
+  const score = session.score;
+  const pct = Math.round(score / total * 100);
+  const xpEarned = score * 10;
+  state.xp += xpEarned;
+  save();
+  if (pct >= 60) launchConfetti();
+  const remaining = getMissedCount();
+  showScreen('complete');
+  document.getElementById('complete-body').innerHTML = `
+    <div class="trophy">${pct === 100 ? '🏆' : pct >= 80 ? '🎉' : '📚'}</div>
+    <h2>${pct === 100 ? 'All cleared!' : 'Review complete!'}</h2>
+    <p>You reviewed ${total} question${total !== 1 ? 's' : ''} from your missed pile.</p>
+    <div class="xp-earned">⭐ +${xpEarned} XP earned</div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="val" style="color:var(--green)">${score}/${total}</div><div class="lbl">Correct</div></div>
+      <div class="stat-box"><div class="val" style="color:var(--yellow-dark)">${pct}%</div><div class="lbl">Accuracy</div></div>
+      <div class="stat-box"><div class="val" style="color:var(--blue)">${remaining}</div><div class="lbl">Still to Review</div></div>
+    </div>
+    <button class="continue-btn green" onclick="showScreen('home');renderHome()">Back to Home</button>
+    ${remaining > 0 ? `<button class="continue-btn blue" style="margin-top:12px" onclick="startReviewSession()">Review Again →</button>` : ''}
+  `;
+  updateNav(); updateHomeXP();
+}
+
+// ─── FORMULA REFERENCE ───────────────────────────────────────────────────────
+const FORMULAS = [
+  { category: "⏱️ Time Value of Money", items: [
+    { name: "Future Value", formula: "FV = PV × (1 + r)ⁿ", note: "What today's money grows to. r = rate per period, n = number of periods." },
+    { name: "Present Value", formula: "PV = FV / (1 + r)ⁿ", note: "What future money is worth in today's dollars." },
+    { name: "PV of Perpetuity", formula: "PV = CF / r", note: "Value of a cash flow paid forever. CF = annual payment." },
+    { name: "PV of Annuity", formula: "PV = CF × [1 − (1+r)⁻ⁿ] / r", note: "Value of equal payments for n periods." },
+    { name: "Compound Interest", formula: "A = P(1 + r/n)^(nt)", note: "P = principal, r = annual rate, n = compounds/year, t = years." },
+    { name: "Rule of 72", formula: "Years to double ≈ 72 ÷ annual return %", note: "At 8%: 72÷8 = 9 years to double. Quick and accurate." },
+  ]},
+  { category: "🏢 Valuation", items: [
+    { name: "Market Capitalization", formula: "Market Cap = Share Price × Shares Outstanding", note: "Total market value of all a company's shares." },
+    { name: "Enterprise Value", formula: "EV = Market Cap + Debt − Cash", note: "Total cost to acquire a company. Capital-structure neutral." },
+    { name: "P/E Ratio", formula: "P/E = Price per Share / EPS", note: "How much investors pay per $1 of earnings. Higher = more growth expected." },
+    { name: "EV/EBITDA", formula: "EV / EBITDA", note: "Preferred M&A multiple — not affected by capital structure or taxes." },
+    { name: "Net Present Value", formula: "NPV = Σ [CFₜ / (1+r)ᵗ] − Initial Investment", note: "NPV > 0 = value-creating project → accept it." },
+  ]},
+  { category: "📊 Cost of Capital", items: [
+    { name: "CAPM (Cost of Equity)", formula: "Re = Rf + β × (Rm − Rf)", note: "Rf = risk-free rate, β = beta, (Rm−Rf) = equity risk premium (~5–7%)." },
+    { name: "WACC", formula: "WACC = (E/V × Re) + (D/V × Rd × (1−T))", note: "Blended cost of all capital, tax-adjusted. Used as DCF discount rate." },
+    { name: "After-tax Cost of Debt", formula: "After-tax Rd = Rd × (1 − Tax Rate)", note: "Interest is tax-deductible — the real cost of debt is lower than the stated rate." },
+  ]},
+  { category: "📋 Financial Statements", items: [
+    { name: "Gross Profit", formula: "Gross Profit = Revenue − COGS", note: "Core production profitability before overhead expenses." },
+    { name: "EBIT", formula: "EBIT = Gross Profit − Operating Expenses", note: "Operating profit. Ignores financing costs and taxes." },
+    { name: "EBITDA", formula: "EBITDA = EBIT + Depreciation + Amortization", note: "Proxy for operating cash flow. Widely used in valuation." },
+    { name: "Net Income", formula: "Net Income = EBIT − Interest − Taxes", note: "The 'bottom line.' Basis for EPS." },
+    { name: "EPS", formula: "EPS = Net Income / Shares Outstanding", note: "Profit per share. Core metric for stock valuation." },
+    { name: "Accounting Equation", formula: "Assets = Liabilities + Shareholders' Equity", note: "Always balances. The foundation of all accounting." },
+    { name: "Working Capital", formula: "Current Assets − Current Liabilities", note: "Positive = can cover short-term obligations. Negative = liquidity risk." },
+    { name: "Free Cash Flow", formula: "FCF = Operating Cash Flow − CapEx", note: "Cash truly available to investors after reinvesting in the business." },
+  ]},
+  { category: "📈 Financial Ratios", items: [
+    { name: "Current Ratio", formula: "Current Assets / Current Liabilities", note: ">1 is healthy. Measures ability to cover short-term bills." },
+    { name: "Quick Ratio", formula: "(Current Assets − Inventory) / Current Liabilities", note: "Stricter liquidity — excludes inventory that may be hard to sell fast." },
+    { name: "Gross Margin", formula: "Gross Profit / Revenue", note: "Core production efficiency. Apple ~43%, Walmart ~25%." },
+    { name: "Net Profit Margin", formula: "Net Income / Revenue", note: "Overall profitability after all costs. Higher = more efficient." },
+    { name: "ROE", formula: "Net Income / Shareholders' Equity", note: "Return on equity. Buffett's favorite profitability metric." },
+    { name: "ROA", formula: "Net Income / Total Assets", note: "How efficiently assets generate profit." },
+    { name: "D/E Ratio", formula: "Total Debt / Total Equity", note: "Financial leverage. Higher = more risk of financial distress." },
+    { name: "Interest Coverage", formula: "EBIT / Interest Expense", note: ">3× is healthy. Below 1× means the company can't pay its interest." },
+  ]},
+  { category: "⚖️ Investing & Risk", items: [
+    { name: "Expected Return", formula: "E(R) = Risk-Free Rate + Risk Premium", note: "Compensation demanded for taking on additional risk." },
+    { name: "Sharpe Ratio", formula: "(Return − Rf) / Standard Deviation", note: "Return per unit of risk. Higher = better risk-adjusted performance." },
+    { name: "Beta", formula: "β = Cov(asset, market) / Var(market)", note: "Sensitivity to market moves. β>1 = more volatile than market." },
+  ]},
+  { category: "🏠 Real Estate", items: [
+    { name: "NOI", formula: "NOI = Gross Rental Income − Operating Expenses", note: "Before mortgage. The core real estate cash flow metric." },
+    { name: "Cap Rate", formula: "Cap Rate = NOI / Property Value", note: "Unlevered yield on a property. Higher = more yield (usually more risk)." },
+    { name: "Cash-on-Cash Return", formula: "Annual Cash Flow / Total Cash Invested", note: "Return on actual dollars deployed (includes effect of leverage)." },
+    { name: "GRM", formula: "Purchase Price / Annual Gross Rent", note: "Quick screening tool. Lower is better value." },
+  ]},
+  { category: "🌍 Macro & Tax", items: [
+    { name: "Real Interest Rate", formula: "Real Rate = Nominal Rate − Inflation Rate", note: "Fisher equation. Your actual return after inflation erodes purchasing power." },
+    { name: "Effective Tax Rate", formula: "Total Taxes Paid / Gross Income", note: "Your true average tax rate — usually much lower than your marginal rate." },
+    { name: "After-tax Return", formula: "Pre-tax Return × (1 − Tax Rate)", note: "What you actually keep. Taxes compound against you over time." },
+    { name: "Retirement Number (4% Rule)", formula: "Annual Expenses × 25", note: "The portfolio size that can sustain 4% annual withdrawals indefinitely." },
+  ]},
+];
+
+function renderFormulas() {
+  updateNav();
+  const body = document.getElementById('formula-body');
+  body.innerHTML = FORMULAS.map(cat => `
+    <div class="formula-category">
+      <div class="formula-cat-header">${cat.category}</div>
+      ${cat.items.map(item => `
+        <div class="formula-item">
+          <div class="formula-item-name">${item.name}</div>
+          <div class="formula-box-sm">${item.formula}</div>
+          <div class="formula-item-note">${item.note}</div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+renderHome();
+</script>
+</body>
+</html>
