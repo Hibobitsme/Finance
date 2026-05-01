@@ -654,120 +654,124 @@ const CURRICULUM = [
   },
   {
     id: 3, title: "Financial Statements", icon: "📊",
-    desc: "Read and analyze income statements, balance sheets, cash flows, and key ratios.",
+    desc: "Read income statements, balance sheets, and cash flows like a pro — structure, interpretation, red flags, and how all three connect.",
     lessons: [
       {
         title: "The Income Statement",
         content: `
           <h2>The Income Statement</h2>
-          <p>The <strong>income statement</strong> (also called the Profit & Loss or P&L) shows a company's revenues and expenses over a period of time (quarter or year). It answers: <em>Did the company make money?</em></p>
-          <div class="highlight-box">📅 Key distinction: The income statement covers a <strong>period of time</strong> (e.g., Q3 2024). The balance sheet is a snapshot <strong>at a point in time</strong>.</div>
-          <p>The income statement flows from top to bottom:</p>
+          <p>The <strong>income statement</strong> (P&L — Profit & Loss) shows how much money a company made and spent over a period of time. Critical distinction: it covers a <strong>period</strong> (e.g., Q3 2024 or full year), while the balance sheet is a snapshot at a single point in time.</p>
+          <div class="highlight-box">📌 The income statement follows <strong>accrual accounting</strong> — revenue is recorded when earned, expenses when incurred, regardless of when cash moves. This is why accounting profit ≠ cash flow, and why you always need to check the cash flow statement too.</div>
+          <p><strong>The structure, top to bottom:</strong></p>
           <div class="key-terms">
-            <div class="key-term"><strong>Revenue (Top Line)</strong><span>Total sales. The starting point. Also called "sales" or "net revenue."</span></div>
-            <div class="key-term"><strong>COGS</strong><span>Cost of Goods Sold — direct costs to produce goods/services (materials, labor). Revenue − COGS = Gross Profit.</span></div>
-            <div class="key-term"><strong>Gross Profit</strong><span>Revenue − COGS. Shows core business profitability before overhead.</span></div>
-            <div class="key-term"><strong>Operating Expenses (OpEx)</strong><span>Indirect costs: R&D, marketing, administrative, salaries. Gross Profit − OpEx = EBIT.</span></div>
+            <div class="key-term"><strong>Revenue (Top Line)</strong><span>Total sales. Everything starts here. Also called "net revenue" or "net sales."</span></div>
+            <div class="key-term"><strong>COGS</strong><span>Cost of Goods Sold — direct production costs (materials, direct labor). Revenue − COGS = Gross Profit.</span></div>
+            <div class="key-term"><strong>Gross Profit</strong><span>Revenue − COGS. Measures pricing power and production efficiency before any overhead.</span></div>
+            <div class="key-term"><strong>Operating Expenses</strong><span>SG&A, R&D, depreciation — indirect costs. Gross Profit − OpEx = EBIT.</span></div>
+            <div class="key-term"><strong>EBIT</strong><span>Earnings Before Interest & Taxes — pure operating profit, unaffected by how the company is financed.</span></div>
+            <div class="key-term"><strong>EBITDA</strong><span>EBIT + D&A. Strips out non-cash charges to approximate operating cash flow. Widely used in valuation.</span></div>
+            <div class="key-term"><strong>Net Income (Bottom Line)</strong><span>After interest and taxes. Belongs to shareholders. Basis for EPS.</span></div>
+            <div class="key-term"><strong>EPS</strong><span>Earnings Per Share = Net Income ÷ Shares Outstanding. The most-cited per-share profit metric.</span></div>
           </div>
-          <div class="key-terms">
-            <div class="key-term"><strong>EBIT</strong><span>Earnings Before Interest and Taxes. Operating profit — profitability of the core business ignoring financing and taxes.</span></div>
-            <div class="key-term"><strong>EBITDA</strong><span>EBIT + Depreciation + Amortization. A proxy for operating cash flow. Widely used in valuation.</span></div>
-            <div class="key-term"><strong>Net Income (Bottom Line)</strong><span>Revenue minus ALL expenses and taxes. The "profit" headline number. Basis for EPS.</span></div>
-            <div class="key-term"><strong>EPS</strong><span>Earnings Per Share = Net Income / Shares Outstanding. How much profit per share of stock.</span></div>
-          </div>
+          <p><strong>Reading Apple's P&L in 5 seconds:</strong> Revenue $383B → Gross Profit $169B (44% gross margin — exceptional pricing power) → Operating Income $114B (30% margin — extremely lean) → Net Income $97B. A machine.</p>
+          <p><strong>What analysts actually look for:</strong></p>
+          <p>📈 <strong>Revenue growth trend</strong> — accelerating or decelerating? vs. peers?</p>
+          <p>📊 <strong>Margin expansion/compression</strong> — improving competitive position or losing ground?</p>
+          <p>⚠️ <strong>One-time items</strong> — strip out restructuring charges, write-downs, and asset-sale gains to see "normalized" earnings.</p>
         `,
         quiz: [
-          { q: "The income statement covers:", opts: ["A single point in time","A period of time (quarter or year)","The company's entire history","Only cash transactions"], ans: 1, exp: "Income statements cover a time PERIOD (Jan 1 – Dec 31). Balance sheets are point-in-time snapshots." },
-          { q: "What does COGS stand for?", opts: ["Cost of Goods Sold","Company Operating Gross Sales","Cash on General Statement","Capital Outflow Gross Sum"], ans: 0, exp: "COGS = Cost of Goods Sold — the direct costs of producing the goods or services sold." },
-          { q: "Gross Profit is calculated as:", opts: ["Revenue − All Expenses","Revenue − COGS","Revenue − Taxes","Net Income + Depreciation"], ans: 1, exp: "Gross Profit = Revenue − COGS. It measures core production profitability before overhead costs." },
-          { q: "EBITDA adds back Depreciation and Amortization to EBIT because:", opts: ["They are cash expenses","They are non-cash charges that don't represent actual cash outflows","They are illegal to include","They are revenue items"], ans: 1, exp: "D&A are accounting charges, not actual cash payments. Adding them back gives a better sense of cash generation." },
-          { q: "Earnings Per Share (EPS) is calculated as:", opts: ["Net Income × Shares Outstanding","Net Income / Shares Outstanding","Revenue / Shares Outstanding","Gross Profit / Shares Outstanding"], ans: 1, exp: "EPS = Net Income / Shares Outstanding. It shows how much profit is attributable to each share." }
+          { q: "The key difference between the income statement and balance sheet is:", opts: ["Size","The income statement covers a time period; the balance sheet is a point-in-time snapshot","The income statement includes debt","The balance sheet shows revenue"], ans: 1, exp: "Income statement = period (e.g., full year). Balance sheet = snapshot on one specific date. Critical distinction." },
+          { q: "Why does accrual accounting cause profit to differ from cash flow?", opts: ["Taxes are excluded from profit","Revenue is recorded when earned — not when cash is received","COGS is not included","Interest expense is excluded"], ans: 1, exp: "Under accrual accounting, you book revenue when you earn it, even if the customer hasn't paid yet. Cash might arrive months later." },
+          { q: "Apple has $383B revenue and $169B gross profit. Its gross margin is:", opts: ["25%","30%","44%","55%"], ans: 2, exp: "Gross Margin = 169/383 = 44%. Exceptional for a company that size — evidence of enormous pricing power and brand premium." },
+          { q: "EBITDA is preferred over net income in valuation because:", opts: ["It's always higher","It strips out non-cash and financing items, making companies more comparable","It's easier to calculate","It includes taxes"], ans: 1, exp: "EBITDA removes D&A (non-cash), interest (financing-dependent), and taxes (jurisdiction-dependent) — giving a cleaner comparison of operating performance." },
+          { q: "Why should analysts strip out one-time items from reported earnings?", opts: ["To make the company look better","One-time items distort recurring earning power — normalized earnings show the true engine","They are illegal","One-time items are always negative"], ans: 1, exp: "Restructuring charges, asset write-downs, and sale gains don't repeat. Stripping them out reveals the underlying earnings engine." }
         ]
       },
       {
         title: "The Balance Sheet",
         content: `
           <h2>The Balance Sheet</h2>
-          <p>The <strong>balance sheet</strong> is a financial snapshot of what a company owns (assets), what it owes (liabilities), and what belongs to shareholders (equity) at a specific moment in time.</p>
+          <p>The <strong>balance sheet</strong> is a snapshot of what a company <em>owns</em> (assets), what it <em>owes</em> (liabilities), and what belongs to shareholders (equity) — all at a single point in time. The fundamental equation that always holds:</p>
           <div class="formula-box">Assets = Liabilities + Shareholders' Equity</div>
-          <p>This equation ALWAYS balances — it's the fundamental accounting equation.</p>
+          <p>Every financial transaction affects at least two items — that's double-entry accounting, and it's why the equation never breaks.</p>
           <div class="key-terms">
-            <div class="key-term"><strong>Current Assets</strong><span>Converted to cash within 1 year: cash, accounts receivable, inventory, prepaid expenses.</span></div>
-            <div class="key-term"><strong>Non-Current Assets</strong><span>Long-term assets: property, plant & equipment (PP&E), intangibles, goodwill, long-term investments.</span></div>
-            <div class="key-term"><strong>Current Liabilities</strong><span>Due within 1 year: accounts payable, short-term debt, accrued expenses.</span></div>
-            <div class="key-term"><strong>Non-Current Liabilities</strong><span>Long-term debt, deferred taxes, pension obligations.</span></div>
+            <div class="key-term"><strong>Current Assets</strong><span>Cash, receivables, inventory — convertible to cash within 12 months.</span></div>
+            <div class="key-term"><strong>Non-Current Assets</strong><span>PP&E (property, plant, equipment), intangibles, goodwill — used over the long term.</span></div>
+            <div class="key-term"><strong>Current Liabilities</strong><span>Accounts payable, short-term debt, accrued expenses — due within 12 months.</span></div>
+            <div class="key-term"><strong>Long-Term Liabilities</strong><span>Long-term debt, deferred taxes — due beyond 12 months.</span></div>
+            <div class="key-term"><strong>Retained Earnings</strong><span>Cumulative net income kept in the business instead of paid out as dividends. Grows each profitable year.</span></div>
+            <div class="key-term"><strong>Goodwill</strong><span>Premium paid in acquisitions above fair value of net assets. Only appears after M&A deals.</span></div>
           </div>
-          <div class="key-terms">
-            <div class="key-term"><strong>Shareholders' Equity</strong><span>= Assets − Liabilities. What owners would receive if assets were liquidated. Includes common stock, retained earnings.</span></div>
-            <div class="key-term"><strong>Retained Earnings</strong><span>Cumulative net income kept in the business (not paid as dividends). Grows each year with profits.</span></div>
-            <div class="key-term"><strong>Working Capital</strong><span>Current Assets − Current Liabilities. Measures short-term liquidity. Positive = can cover short-term obligations.</span></div>
-            <div class="key-term"><strong>Goodwill</strong><span>Intangible asset from acquisitions — the premium paid above fair value of acquired assets.</span></div>
-          </div>
+          <p><strong>What the balance sheet reveals:</strong></p>
+          <p>💧 <strong>Liquidity:</strong> Cash on hand, current ratio — can the company cover near-term bills?</p>
+          <p>🏗️ <strong>Capital intensity:</strong> Asset-light businesses (software, Visa) earn exceptional ROA. Capital-intensive businesses (airlines, steel mills) need massive asset bases to compete and earn mediocre returns.</p>
+          <p>⚖️ <strong>Leverage:</strong> How much debt vs. equity? What's the maturity schedule?</p>
+          <div class="highlight-box">🚨 <strong>Red flags to spot:</strong> Receivables growing 2–3x faster than revenue (customers not paying = revenue quality issue). Goodwill as the majority of assets (past acquisitions may need write-downs). Negative equity — sometimes intentional (McDonald's, Starbucks run negative equity from buybacks) but usually a caution sign.</div>
         `,
         quiz: [
-          { q: "The fundamental accounting equation is:", opts: ["Revenue = Expenses + Profit","Assets = Liabilities + Equity","Cash = Income − Taxes","Debt = Assets − Revenue"], ans: 1, exp: "Assets = Liabilities + Shareholders' Equity. This ALWAYS balances — hence 'balance sheet.'" },
-          { q: "Which of these is a Current Asset?", opts: ["A factory building","Long-term debt","Accounts receivable","Goodwill"], ans: 2, exp: "Accounts receivable (money owed to the company) is a current asset — expected to be collected within a year." },
-          { q: "Working Capital is calculated as:", opts: ["Total Assets − Total Liabilities","Current Assets − Current Liabilities","Revenue − Expenses","Long-term Debt − Cash"], ans: 1, exp: "Working Capital = Current Assets − Current Liabilities. Positive working capital means the company can cover its short-term bills." },
-          { q: "What is 'Goodwill' on a balance sheet?", opts: ["Customer satisfaction score","The premium paid over fair value when acquiring a company","Cash held in reserve","Annual employee bonuses"], ans: 1, exp: "Goodwill = the excess price paid in an acquisition above the fair value of net assets. It's an intangible asset." },
-          { q: "Retained Earnings represents:", opts: ["Dividends paid to shareholders","Cash held in the bank","Cumulative net income kept in the business over time","Total revenue for the year"], ans: 2, exp: "Retained earnings accumulate over the company's life — all profits not paid out as dividends." }
+          { q: "The balance sheet equation always holds because of:", opts: ["Government regulation","Double-entry accounting — every transaction affects at least two items","Auditor enforcement","GAAP requirements only"], ans: 1, exp: "Double-entry accounting ensures every debit has a corresponding credit. This is why Assets = Liabilities + Equity can never be violated." },
+          { q: "Which of these is a current asset?", opts: ["A factory building","Long-term debt","Accounts receivable","Goodwill"], ans: 2, exp: "Accounts receivable — money owed to the company by customers — is expected to be collected within a year, making it a current asset." },
+          { q: "Why do software companies have better ROA than steel mills?", opts: ["Software is harder to build","Software earns high profits with minimal physical assets (asset-light model)","Steel is more capital efficient","Software companies pay less in taxes"], ans: 1, exp: "ROA = Net Income / Assets. Software firms earn large profits without needing factories or equipment. Steel mills need massive CapEx just to compete." },
+          { q: "Receivables growing 3× faster than revenue over several years signals:", opts: ["Strong sales momentum","Revenue quality is deteriorating — customers may not be paying","Product demand is accelerating","International expansion is working"], ans: 1, exp: "Revenue without cash collection is a warning. Either customers are stretching payment or the company is being aggressive about when it recognizes revenue." },
+          { q: "McDonald's runs negative shareholders' equity. What does this usually mean?", opts: ["McDonald's is bankrupt","The company returned so much cash via buybacks that liabilities now exceed book assets","McDonald's has no equity investors","Accounting error"], ans: 1, exp: "Aggressive buybacks reduce equity. If a company buys back more than its book equity, equity goes negative — but strong cash flows make it fine in practice." }
         ]
       },
       {
         title: "The Cash Flow Statement",
         content: `
           <h2>The Cash Flow Statement</h2>
-          <p>A company can be profitable on paper but still run out of cash. The <strong>cash flow statement</strong> tracks actual cash movements, separated into three sections. It's often considered the most important financial statement by analysts.</p>
-          <div class="highlight-box">⚠️ "Revenue is vanity, profit is sanity, but cash is reality." — A company with great profits but no cash can still go bankrupt.</div>
+          <p>The cash flow statement is the <strong>most honest</strong> of the three statements. It records actual cash in and cash out — no accrual adjustments, no estimates, no one-time restatements. Just cash.</p>
+          <div class="highlight-box">⚠️ "Revenue is vanity, profit is sanity, but cash is reality." A company with great net income but no cash can still go bankrupt. Always check the cash flow statement.</div>
+          <p><strong>The three sections:</strong></p>
           <div class="key-terms">
-            <div class="key-term"><strong>Operating Activities (CFO)</strong><span>Cash from core business operations. Net income adjusted for non-cash items (D&A) and working capital changes. Most important section.</span></div>
-            <div class="key-term"><strong>Investing Activities (CFI)</strong><span>Cash spent on long-term assets (buying PP&E = CapEx) or received from selling assets. Usually negative for growing companies.</span></div>
-            <div class="key-term"><strong>Financing Activities (CFF)</strong><span>Cash from issuing debt/stock or paying dividends/buybacks. Reflects how the company funds itself.</span></div>
+            <div class="key-term"><strong>Operating Activities (CFO)</strong><span>Cash from running the core business. Starts with net income, adds back non-cash items (D&A), adjusts for working capital changes.</span></div>
+            <div class="key-term"><strong>Investing Activities (CFI)</strong><span>Cash spent on CapEx and acquisitions, or received from asset sales. Almost always negative for growing companies.</span></div>
+            <div class="key-term"><strong>Financing Activities (CFF)</strong><span>Cash from issuing/repaying debt, issuing/buying back equity, and paying dividends.</span></div>
           </div>
-          <div class="formula-box">Free Cash Flow (FCF) = CFO − Capital Expenditures (CapEx)</div>
-          <p><strong>Free Cash Flow</strong> is what's left after maintaining and growing the business. This is the cash available to pay investors, pay down debt, or reinvest. It's the basis for DCF valuation.</p>
-          <div class="key-terms">
-            <div class="key-term"><strong>CapEx</strong><span>Capital Expenditures — money spent on property, plants, equipment. Found in investing activities.</span></div>
-            <div class="key-term"><strong>Non-cash Items</strong><span>Depreciation and amortization are added back to net income in CFO — they're expenses on the P&L but don't actually take cash out.</span></div>
-            <div class="key-term"><strong>Direct vs. Indirect Method</strong><span>Two ways to present CFO. Indirect (more common) starts with net income and adjusts. Direct shows actual cash receipts and payments.</span></div>
-          </div>
+          <div class="formula-box">Free Cash Flow (FCF) = CFO − CapEx</div>
+          <p><strong>FCF is the single most important number here.</strong> It's what the business truly generates after reinvesting in itself — available for debt paydown, dividends, buybacks, or acquisitions.</p>
+          <p><strong>Reading the signals:</strong></p>
+          <p>✅ <strong>CFO consistently > Net Income:</strong> High earnings quality — cash backs up the accounting.</p>
+          <p>⚠️ <strong>Net Income rising, CFO flat:</strong> Earnings quality problem — profits aren't converting to real cash.</p>
+          <p>🏗️ <strong>Heavy negative CFI:</strong> Investing aggressively — could be great (growth CapEx) or bad (expensive acquisitions).</p>
+          <p>💰 <strong>Large negative CFF:</strong> Returning cash to shareholders via buybacks, debt paydown, or dividends.</p>
+          <div class="highlight-box">🔑 <strong>Buffett's "Owner Earnings"</strong> ≈ Net Income + D&A − Maintenance CapEx. A conservative FCF that strips out only the CapEx needed to maintain (not grow) the business. High owner earnings relative to price = his hunting ground.</div>
         `,
         quiz: [
-          { q: "Which section of the cash flow statement shows cash from a company's core business?", opts: ["Investing Activities","Financing Activities","Operating Activities","Revenue Activities"], ans: 2, exp: "CFO (Cash from Operations) = cash generated from the core business. It's the most critical section." },
-          { q: "Free Cash Flow (FCF) is calculated as:", opts: ["Net Income + Depreciation","Operating Cash Flow − CapEx","Revenue − COGS","EBITDA − Taxes"], ans: 1, exp: "FCF = Operating Cash Flow − Capital Expenditures. It's the cash truly available to investors after reinvestment." },
-          { q: "Why is Depreciation added BACK to Net Income in the operating section?", opts: ["It increases revenue","It's a non-cash expense — no cash actually leaves the company","It reduces taxes","It represents asset purchases"], ans: 1, exp: "Depreciation reduces net income on the P&L, but no cash is paid. Adding it back restores actual cash flow." },
-          { q: "A company reports Net Income of $1M but has negative Operating Cash Flow. This most likely means:", opts: ["The company is growing fast","The company is profitable and healthy","Revenue is being recognized but cash isn't being collected (receivables issue)","The company has too much equity"], ans: 2, exp: "Net income can look great while cash flow suffers if customers aren't paying (high receivables), or inventory is building up." },
-          { q: "Capital Expenditures (CapEx) appear in which section of the cash flow statement?", opts: ["Operating Activities","Investing Activities","Financing Activities","All three sections"], ans: 1, exp: "CapEx is in Investing Activities — it's cash spent on long-term assets like buildings and equipment." }
+          { q: "Why is the cash flow statement the 'most honest' statement?", opts: ["It's the longest","It records actual cash — no accrual adjustments or estimates","It's prepared by auditors","It has the most line items"], ans: 1, exp: "Cash is cash. Unlike net income, you can't easily inflate cash flow with accounting choices — it's a much harder number to manipulate." },
+          { q: "Free Cash Flow = :", opts: ["Net Income + Depreciation","Operating Cash Flow − CapEx","Revenue − All Expenses","EBIT × (1 − Tax Rate)"], ans: 1, exp: "FCF = CFO − CapEx. It's what's truly available to investors after the business funds its own maintenance and growth." },
+          { q: "Net Income is rising but CFO is flat. What's the likely issue?", opts: ["The company is very efficient","Earnings quality concern — accounting profits aren't converting to real cash","CFO always lags net income by one year","The company has too much cash"], ans: 1, exp: "Persistent divergence between net income and cash flow signals aggressive revenue recognition, rising receivables, or inventory build-up." },
+          { q: "A company has large negative Financing Cash Flow. This most likely means:", opts: ["It's borrowing heavily","It's returning cash to shareholders — buybacks, dividends, or debt repayment","It's losing money","It's buying equipment"], ans: 1, exp: "Negative CFF = cash flowing OUT to capital providers. Paying down debt, buying back shares, or paying dividends all show up here." },
+          { q: "Buffett's 'Owner Earnings' is more conservative than standard FCF because:", opts: ["It excludes revenue","It only subtracts CapEx needed to maintain the business, not growth CapEx","It uses a higher discount rate","It ignores depreciation"], ans: 1, exp: "Standard FCF uses total CapEx. Owner Earnings only subtracts maintenance CapEx — the minimum needed to stay competitive — giving a truer picture of cash generation." }
         ]
       },
       {
-        title: "Financial Ratios & Analysis",
+        title: "How the Three Statements Connect",
         content: `
-          <h2>Financial Ratios & Analysis</h2>
-          <p>Financial ratios are the language analysts use to quickly compare companies. They extract meaning from raw numbers and make it possible to compare a $10B company to a $100B company.</p>
-          <p><strong>Liquidity Ratios</strong> — Can the company pay its short-term bills?</p>
+          <h2>How the Three Statements Connect</h2>
+          <p>The income statement, balance sheet, and cash flow statement are <strong>not three separate documents</strong> — they're three views of the same economic reality, deeply linked. Understanding these connections is what separates people who really know finance from those who just memorized definitions.</p>
+          <div class="highlight-box">🔗 The three-statement model is the most tested concept in investment banking interviews. "Walk me through how a $10 increase in depreciation flows through all three statements" is a canonical question every IB candidate must nail.</div>
+          <p><strong>The key linkages:</strong></p>
           <div class="key-terms">
-            <div class="key-term"><strong>Current Ratio</strong><span>Current Assets / Current Liabilities. >1 is good. Measures ability to cover short-term obligations.</span></div>
-            <div class="key-term"><strong>Quick Ratio</strong><span>(Current Assets − Inventory) / Current Liabilities. Stricter — excludes inventory since it may be hard to sell fast.</span></div>
+            <div class="key-term"><strong>Net Income → Retained Earnings</strong><span>Net income from the P&L increases retained earnings on the balance sheet (equity section) each period.</span></div>
+            <div class="key-term"><strong>Net Income → CFS Starting Point</strong><span>The cash flow statement begins with net income and adjusts it to arrive at actual cash generated.</span></div>
+            <div class="key-term"><strong>CapEx → PP&E</strong><span>Cash spent on CapEx (outflow in CFI) increases PP&E on the balance sheet, then depreciates back through the income statement over time.</span></div>
+            <div class="key-term"><strong>D&A → Both Statements</strong><span>Depreciation reduces net income (non-cash expense on P&L) but is added back in CFO — no actual cash left the business.</span></div>
+            <div class="key-term"><strong>Working Capital Changes</strong><span>Changes in receivables, inventory, and payables appear in CFO and simultaneously shift current assets/liabilities on the balance sheet.</span></div>
+            <div class="key-term"><strong>Cash Closes the Loop</strong><span>The net change in cash on the CFS must equal the change in the cash line on the balance sheet. This is the final reconciliation check.</span></div>
           </div>
-          <p><strong>Profitability Ratios</strong> — How efficiently does the company make money?</p>
-          <div class="key-terms">
-            <div class="key-term"><strong>Gross Margin</strong><span>Gross Profit / Revenue. Shows core production efficiency. Apple (~43%) vs. Walmart (~25%).</span></div>
-            <div class="key-term"><strong>Net Profit Margin</strong><span>Net Income / Revenue. Overall profitability after everything. Higher = more efficient.</span></div>
-            <div class="key-term"><strong>ROE</strong><span>Return on Equity = Net Income / Shareholders' Equity. How well the company generates profit from equity. Warren Buffett's favorite metric.</span></div>
-            <div class="key-term"><strong>ROA</strong><span>Return on Assets = Net Income / Total Assets. How efficiently assets generate profit.</span></div>
-          </div>
-          <p><strong>Leverage Ratios</strong> — How much debt is the company carrying?</p>
-          <div class="key-terms">
-            <div class="key-term"><strong>Debt-to-Equity</strong><span>Total Debt / Total Equity. Higher = more leveraged = more risk.</span></div>
-            <div class="key-term"><strong>Interest Coverage</strong><span>EBIT / Interest Expense. How many times can the company cover its interest payments? >3x is healthy.</span></div>
-          </div>
+          <p><strong>Walk through the $10 depreciation increase (tax rate 40%):</strong></p>
+          <p>📋 <strong>Income Statement:</strong> D&A ↑$10 → Pre-tax income ↓$10 → Taxes ↓$4 → Net Income ↓$6</p>
+          <p>💵 <strong>Cash Flow Statement:</strong> Net Income ↓$6, but D&A added back +$10 → CFO net ↑$4</p>
+          <p>📊 <strong>Balance Sheet:</strong> PP&E ↓$10 (accumulated D&A), Cash ↑$4, Retained Earnings ↓$6 → Still balances ✓</p>
+          <div class="highlight-box">💡 The 3-statement model is the foundation of all financial modeling. Every DCF, LBO, and merger model is built on it. If you can build and link all three from scratch, you can build anything in finance — and you'll immediately stand out at Clemson and in internship interviews.</div>
         `,
         quiz: [
-          { q: "A Current Ratio of 0.7 means:", opts: ["The company is very liquid","The company has 70 cents in current assets for every $1 of current liabilities — a red flag","The company is highly profitable","The debt is low"], ans: 1, exp: "Current Ratio < 1 means current liabilities exceed current assets. The company may struggle to meet short-term obligations." },
-          { q: "ROE (Return on Equity) measures:", opts: ["How liquid the company is","How much revenue the company generates","How efficiently the company generates profit from shareholder equity","How much debt the company uses"], ans: 2, exp: "ROE = Net Income / Equity. It tells you how many dollars of profit the company earns per dollar of equity." },
-          { q: "Which ratio is STRICTER than the Current Ratio?", opts: ["Debt-to-Equity Ratio","Quick Ratio","Interest Coverage Ratio","Net Profit Margin"], ans: 1, exp: "Quick Ratio excludes inventory (harder to liquidate quickly), making it a more conservative liquidity measure." },
-          { q: "Gross Margin = 40% means:", opts: ["40% of revenue becomes net income","40 cents of every revenue dollar remains after paying direct production costs","The company has 40% ROE","40% of assets are financed by equity"], ans: 1, exp: "Gross Margin = Gross Profit / Revenue. 40% means $0.40 of every $1.00 in sales remains after COGS." },
-          { q: "Interest Coverage Ratio of 1.5x means:", opts: ["The company earns 1.5x its interest expense in operating profit — barely covering it","The company has no financial risk","Debt is 1.5x equity","The company pays 1.5% interest"], ans: 0, exp: "1.5x is dangerously low — the company barely covers interest. Analysts prefer 3x+. Below 1x = can't pay interest." }
+          { q: "Net income from the income statement flows into:", opts: ["PP&E on the balance sheet","Retained earnings in the equity section of the balance sheet","Financing activities on the CFS","CapEx"], ans: 1, exp: "Every dollar of net income that isn't paid out as a dividend increases retained earnings — building up owner equity over time." },
+          { q: "If depreciation increases $10 at a 40% tax rate, how does CFO change?", opts: ["Falls $10","Rises $4","No change","Falls $6"], ans: 1, exp: "Net income falls $6 (after-tax), but D&A adds back $10 (non-cash). Net effect on CFO: +$4. The government effectively subsidizes depreciation." },
+          { q: "Why is depreciation added back on the cash flow statement?", opts: ["It's a revenue item","It's a non-cash expense — no actual cash left the business","It offsets CapEx dollar for dollar","Accounting rules require it"], ans: 1, exp: "D&A reduces net income (accounting charge) but involves no cash payment. Adding it back converts accrual-based income to actual cash income." },
+          { q: "CapEx flows through which two statements?", opts: ["Income statement and balance sheet","CFS as a cash outflow AND balance sheet as an increase in PP&E","Income statement only","Balance sheet only"], ans: 1, exp: "CapEx: cash out on CFS (investing section) → PP&E up on balance sheet → slowly depreciated back through the income statement over years." },
+          { q: "How do you verify the three statements are correctly linked?", opts: ["Net income equals cash flow","Net income equals total assets","The ending cash on the CFS equals the change in cash on the balance sheet","All three show the same profit"], ans: 0, exp: "The net change in cash per the CFS must match the change in the cash line item on the balance sheet. That's the reconciliation check that confirms everything links." }
         ]
       }
     ]
@@ -1421,133 +1425,6 @@ const CURRICULUM = [
           { q: "If receivables are growing 50% YoY while revenue grows 10%, what could be happening?", opts: ["Strong demand","Channel stuffing or customers stretching payment — quality of revenue is deteriorating","Tax accounting","International expansion"], ans: 1, exp: "Revenue without cash collection means either pulling forward sales artificially or letting customers pay late — both warning signs." },
           { q: "What's a hallmark of a 10/10 quality business?", opts: ["High debt levels","ROE >20%, expanding margins, low leverage, high cash conversion","Big stock buybacks","Growing fast at any cost"], ans: 1, exp: "Apple, Microsoft, Visa — all combine high returns on capital, growing margins, low debt, and cash flow that matches earnings." },
           { q: "What's Buffett's classic screen?", opts: ["Low P/E ratio","ROE >15% sustained, low debt, expanding margins, EPS growth >7%","Highest dividend","Most R&D spending"], ans: 1, exp: "Sustained high ROE + low leverage + margin expansion = a long-term compounder. This filter alone finds most of the great businesses." }
-        ]
-      }
-    ]
-  },
-  {
-    id: 10, title: "Financial Statements Deep Dive", icon: "📋",
-    desc: "Read income statements, balance sheets, and cash flow statements like a professional — not just definitions, but interpretation.",
-    lessons: [
-      {
-        title: "The Income Statement",
-        content: `
-          <h2>The Income Statement</h2>
-          <p>The <strong>income statement</strong> (also called the P&L — Profit & Loss) shows how much money a company made and spent over a period of time (a quarter or year). It answers: <em>"Was the business profitable?"</em></p>
-          <div class="highlight-box">📌 Key principle: the income statement follows <strong>accrual accounting</strong> — revenue is recorded when earned, expenses when incurred, regardless of when cash actually moves. This is why income ≠ cash flow.</div>
-          <p><strong>The structure, top to bottom:</strong></p>
-          <div class="key-terms">
-            <div class="key-term"><strong>Revenue (Top Line)</strong><span>Total sales. The starting point. Everything flows from here.</span></div>
-            <div class="key-term"><strong>COGS</strong><span>Cost of Goods Sold — direct costs to produce what was sold (materials, labor).</span></div>
-            <div class="key-term"><strong>Gross Profit</strong><span>Revenue − COGS. Shows production efficiency and pricing power.</span></div>
-            <div class="key-term"><strong>Operating Expenses</strong><span>SG&A (sales, general, admin), R&D, depreciation — indirect costs to run the business.</span></div>
-            <div class="key-term"><strong>EBIT</strong><span>Earnings Before Interest & Taxes — pure operating profit, unaffected by financing.</span></div>
-            <div class="key-term"><strong>Net Income (Bottom Line)</strong><span>After interest and taxes. What actually belongs to shareholders.</span></div>
-          </div>
-          <p><strong>Reading Apple's 2023 P&L in 5 seconds:</strong> Revenue $383B → Gross Profit $169B (44% margin — pricing power!) → Operating Income $114B (30% operating margin — extremely efficient) → Net Income $97B. That's a machine.</p>
-          <div class="formula-box">Gross Profit = Revenue − COGS
-EBIT = Gross Profit − Operating Expenses
-Net Income = EBIT − Interest − Taxes</div>
-          <p><strong>What to look for when reading an income statement:</strong></p>
-          <p>📈 <strong>Revenue growth</strong> — is the top line growing? At what rate vs. peers?</p>
-          <p>📊 <strong>Margin trends</strong> — are gross margins and operating margins expanding or compressing? Expanding = improving competitive position.</p>
-          <p>⚠️ <strong>One-time items</strong> — restructuring charges, asset write-downs, gains on asset sales. Strip these out to see "normalized" earnings.</p>
-          <p>🔍 <strong>EPS (Earnings Per Share)</strong> — Net Income ÷ Shares Outstanding. The single most-cited public-company metric.</p>
-        `,
-        quiz: [
-          { q: "What does the income statement show?", opts: ["Assets and liabilities at a point in time","Revenue, expenses, and profit over a time period","Cash inflows and outflows","Shareholder equity changes"], ans: 1, exp: "The income statement covers a period (quarter or year) and shows whether the business was profitable." },
-          { q: "What is COGS?", opts: ["Corporate Operating Government Standards","Cost of Goods Sold — direct costs to produce what was sold","Cash On General Statement","Cost of General Services"], ans: 1, exp: "COGS = direct production costs (materials, direct labor). Subtracting it from revenue gives gross profit — core production efficiency." },
-          { q: "Why is net income different from cash flow?", opts: ["Net income includes taxes, cash flow doesn't","Accrual accounting records revenue/expenses when earned, not when cash moves","They are always the same","Cash flow is always higher"], ans: 1, exp: "Under accrual accounting, revenue is booked when earned (not collected) and expenses when incurred (not paid). This creates gaps between profit and cash." },
-          { q: "Apple has revenue of $383B and gross profit of $169B. What is its gross margin?", opts: ["25%","44%","30%","55%"], ans: 1, exp: "Gross Margin = Gross Profit / Revenue = 169/383 = 44%. Exceptional for a company at that scale — shows enormous pricing power." },
-          { q: "What should you strip out to see 'normalized' earnings?", opts: ["Revenue","One-time items like restructuring charges and asset write-downs","Interest expense","Depreciation"], ans: 1, exp: "One-time items distort the true recurring earning power of the business. Analysts always adjust for these to see clean 'normalized' earnings." }
-        ]
-      },
-      {
-        title: "The Balance Sheet",
-        content: `
-          <h2>The Balance Sheet</h2>
-          <p>The <strong>balance sheet</strong> is a snapshot of what a company <em>owns</em> (assets) and what it <em>owes</em> (liabilities), at a specific point in time. The difference is what belongs to shareholders — <strong>equity</strong>.</p>
-          <div class="formula-box">Assets = Liabilities + Shareholders' Equity</div>
-          <p>This equation <em>always</em> balances — that's the law of double-entry accounting. Every transaction affects at least two items.</p>
-          <div class="key-terms">
-            <div class="key-term"><strong>Current Assets</strong><span>Cash, receivables, inventory — convertible to cash within 12 months.</span></div>
-            <div class="key-term"><strong>Non-Current Assets</strong><span>PP&E (plants, equipment), intangibles, goodwill — long-term investments.</span></div>
-            <div class="key-term"><strong>Current Liabilities</strong><span>Accounts payable, short-term debt, accrued expenses — due within 12 months.</span></div>
-            <div class="key-term"><strong>Long-Term Liabilities</strong><span>Long-term debt, deferred tax liabilities — due beyond 12 months.</span></div>
-            <div class="key-term"><strong>Shareholders' Equity</strong><span>Paid-in capital + retained earnings − treasury stock. The "book value."</span></div>
-            <div class="key-term"><strong>Goodwill</strong><span>Premium paid in acquisitions above fair value of net assets. Only appears after M&A.</span></div>
-          </div>
-          <p><strong>What the balance sheet tells you:</strong></p>
-          <p>💧 <strong>Liquidity:</strong> How much cash does the company have? Can it cover short-term obligations? (Current ratio, quick ratio)</p>
-          <p>🏗️ <strong>Capital intensity:</strong> Does the business require massive physical assets (manufacturing) or is it asset-light (software)?</p>
-          <p>⚖️ <strong>Leverage:</strong> How much debt relative to equity? What's the debt maturity schedule?</p>
-          <p>🔍 <strong>Pro tip — watch for red flags:</strong> Goodwill that's grown to be the majority of assets (acquisition strategy that may need write-downs), receivables growing faster than revenue (customers not paying), or negative equity (heavily leveraged companies like McDonald's actually run negative equity intentionally).</p>
-          <div class="highlight-box">💡 <strong>Asset-light businesses</strong> (Visa, software firms) tend to generate exceptional ROE and ROA because they earn massive profits without needing huge asset bases. Capital-intensive businesses (airlines, steel mills) earn mediocre returns even in good times.</div>
-        `,
-        quiz: [
-          { q: "The fundamental balance sheet equation is:", opts: ["Revenue = Expenses + Profit","Assets = Liabilities + Shareholders' Equity","Cash = Net Income + D&A","Equity = Assets − Revenue"], ans: 1, exp: "This equation always balances — every transaction is recorded on both sides. It's the foundation of all accounting." },
-          { q: "What is goodwill on a balance sheet?", opts: ["Company reputation score","Premium paid in acquisitions above the fair value of net assets","Customer loyalty value","Patent value"], ans: 1, exp: "Goodwill only appears after acquisitions — it's the excess purchase price over the fair value of identifiable assets." },
-          { q: "What does negative shareholders' equity mean?", opts: ["The company is bankrupt","Liabilities exceed assets — often from heavy buybacks or leverage (e.g., McDonald's)","Equity was never recorded","Accounting error"], ans: 1, exp: "Companies like McDonald's and Starbucks run negative equity by returning huge amounts of cash to shareholders via buybacks — not a sign of distress if cash flows are strong." },
-          { q: "A software company vs. a steel mill — which has better ROA and why?", opts: ["Steel mill — more physical assets","Software — earns large profits with minimal asset base (asset-light)","They'd be identical","Steel — more revenue"], ans: 1, exp: "ROA = Net Income / Assets. Software firms earn high profits with few assets → excellent ROA. Steel mills need massive CapEx → mediocre ROA." },
-          { q: "If receivables are growing 3x faster than revenue over 3 years, what's the concern?", opts: ["Strong sales pipeline","Customers may not be paying — revenue quality is deteriorating","International expansion is working","No concern, receivables should grow"], ans: 1, exp: "Receivables growing faster than revenue means the company is booking revenue it hasn't collected — a classic earnings quality warning sign." }
-        ]
-      },
-      {
-        title: "The Cash Flow Statement",
-        content: `
-          <h2>The Cash Flow Statement</h2>
-          <p>The cash flow statement is the <strong>most honest</strong> of the three financial statements. It shows exactly where cash came from and where it went — no accrual accounting, no estimates, no one-time adjustments. Just cash.</p>
-          <p>It has three sections:</p>
-          <div class="key-terms">
-            <div class="key-term"><strong>Operating Activities (CFO)</strong><span>Cash generated from running the core business. Starts with net income and adjusts for non-cash items (D&A) and working capital changes.</span></div>
-            <div class="key-term"><strong>Investing Activities (CFI)</strong><span>Cash spent on long-term assets (CapEx) and acquisitions, or received from asset sales. Almost always negative for growing companies.</span></div>
-            <div class="key-term"><strong>Financing Activities (CFF)</strong><span>Cash from issuing/repaying debt, issuing/buying back shares, paying dividends.</span></div>
-          </div>
-          <div class="formula-box">Free Cash Flow (FCF) = CFO − CapEx</div>
-          <p><strong>FCF is the most important number on the statement.</strong> It's the cash a business truly generates after maintaining and investing in itself — what's available for debt paydown, dividends, buybacks, or acquisitions.</p>
-          <p><strong>Reading the signals:</strong></p>
-          <p>✅ <strong>CFO > Net Income consistently</strong> = high earnings quality. Cash backs up the accounting profits.</p>
-          <p>⚠️ <strong>Net Income growing, CFO flat or falling</strong> = earnings quality problem. The profits aren't translating to real cash.</p>
-          <p>🏗️ <strong>Very negative CFI</strong> = heavy investment phase. May be a good sign (reinvesting for growth) or bad (burning cash on bad acquisitions).</p>
-          <p>💰 <strong>Large positive CFF</strong> = company raised capital (debt or equity). Large negative CFF = returning cash (buybacks, debt paydown, dividends).</p>
-          <div class="highlight-box">🔑 <strong>Warren Buffett's preferred metric is Owner Earnings</strong> ≈ Net Income + D&A − Maintenance CapEx. It's a more conservative FCF that strips out only the CapEx needed to maintain (not grow) the business. Companies with high owner earnings relative to price are Buffett's hunting ground.</div>
-        `,
-        quiz: [
-          { q: "Why is the cash flow statement considered the 'most honest' financial statement?", opts: ["It's audited by regulators","It records actual cash movements with no accrual adjustments","It's the most detailed","It's the longest statement"], ans: 1, exp: "Cash flow is cash flow — you can't fake it as easily as you can manipulate accrual-based net income with accounting choices." },
-          { q: "Free Cash Flow equals:", opts: ["Net Income + Depreciation","Operating Cash Flow − Capital Expenditures","Revenue − All Expenses","EBIT × (1 − Tax Rate)"], ans: 1, exp: "FCF = CFO − CapEx. It's the cash truly available after running and investing in the business." },
-          { q: "What does it mean when Net Income is growing but CFO is flat?", opts: ["Great efficiency","Earnings quality concern — profits aren't converting to real cash","Normal for growing companies","CFO always lags net income"], ans: 1, exp: "When accounting profits outpace cash generation, it often signals aggressive revenue recognition or unfavorable working capital changes." },
-          { q: "A company has heavy negative Investing Cash Flow every year. What is the most likely explanation?", opts: ["The company is losing money","It's investing heavily in CapEx and acquisitions to grow","It's paying dividends","It's buying back stock"], ans: 1, exp: "CFI is almost always negative for growing companies — they're spending on equipment, facilities, or acquiring businesses to grow." },
-          { q: "What does a large negative Financing Cash Flow typically indicate?", opts: ["Company borrowed heavily","Returning cash to shareholders via buybacks, dividends, or debt paydown","Issuing new equity","Operating losses"], ans: 1, exp: "Negative CFF means cash is flowing OUT to capital providers — paying down debt, buying back shares, or paying dividends." }
-        ]
-      },
-      {
-        title: "How the Three Statements Connect",
-        content: `
-          <h2>How the Three Statements Connect</h2>
-          <p>The income statement, balance sheet, and cash flow statement are <strong>not three separate documents</strong> — they're three views of the same underlying economic reality, and they're deeply linked. Understanding the connections is what separates real finance people from those who just memorized definitions.</p>
-          <div class="highlight-box">🔗 The three-statement model is the most tested concept in investment banking interviews. <em>"Walk me through how a $10 increase in depreciation flows through all three statements"</em> is a canonical interview question.</div>
-          <p><strong>The key linkages:</strong></p>
-          <div class="key-terms">
-            <div class="key-term"><strong>Net Income → Retained Earnings</strong><span>Net income from the P&L flows into retained earnings on the balance sheet (via the equity section).</span></div>
-            <div class="key-term"><strong>Net Income → Cash Flow Start</strong><span>The cash flow statement starts with net income and adjusts it to arrive at actual cash.</span></div>
-            <div class="key-term"><strong>CapEx → PP&E</strong><span>Cash spent on CapEx (CFI) increases PP&E on the balance sheet, then depreciates back through the income statement over time.</span></div>
-            <div class="key-term"><strong>D&A → Both Statements</strong><span>Depreciation reduces net income (income statement) but is added back in CFO (non-cash expense) — no actual cash leaves.</span></div>
-            <div class="key-term"><strong>Working Capital Changes</strong><span>Changes in receivables, inventory, and payables hit both the balance sheet and CFO.</span></div>
-            <div class="key-term"><strong>Cash Ends on Balance Sheet</strong><span>Net change in cash from the CFS equals the change in the cash line on the balance sheet.</span></div>
-          </div>
-          <p><strong>Walk through the $10 depreciation example:</strong></p>
-          <p>📋 <strong>Income Statement:</strong> D&A ↑$10 → Pre-tax income ↓$10 → Taxes ↓$4 (at 40%) → Net Income ↓$6</p>
-          <p>💵 <strong>Cash Flow Statement:</strong> Net Income ↓$6 but D&A added back +$10 → CFO ↑$4 (the tax savings)</p>
-          <p>📊 <strong>Balance Sheet:</strong> PP&E ↓$10 (accumulated depreciation), Cash ↑$4, Retained Earnings ↓$6 → Still balances ✓</p>
-          <div class="highlight-box">💡 <strong>The 3-statement model</strong> is the foundation of financial modeling in Excel. Every DCF, LBO, and merger model is built on top of it. If you can build a clean 3-statement model, you can build anything in finance.</div>
-          <p><strong>Why this matters for Clemson + internships:</strong> Finance professors will assume you understand these linkages. Investment banking interviewers test them directly. Anyone who can articulate these connections fluently is immediately differentiated.</p>
-        `,
-        quiz: [
-          { q: "Net income from the income statement flows directly into:", opts: ["PP&E on the balance sheet","Retained earnings on the balance sheet","Financing activities on the cash flow statement","CapEx"], ans: 1, exp: "Net income increases retained earnings (part of equity) on the balance sheet. This is how profitability builds up owner wealth over time." },
-          { q: "If depreciation increases by $10 (tax rate 40%), how does Operating Cash Flow change?", opts: ["Decreases by $10","Increases by $4","No change","Decreases by $6"], ans: 1, exp: "Net income falls $6 (after tax), but D&A adds back $10 non-cash. Net CFO effect: +$4 (the tax shield benefit of depreciation)." },
-          { q: "Why is depreciation added back on the cash flow statement?", opts: ["It's a revenue item","It's a non-cash expense — no actual cash left the business","It offsets CapEx","Accounting rules require it"], ans: 1, exp: "D&A reduces net income (an accounting charge) but no cash left the company. We add it back to convert accrual income to cash income." },
-          { q: "CapEx spending appears on which two statements?", opts: ["Income statement and balance sheet","Cash flow statement (outflow) and balance sheet (increases PP&E)","Income statement only","Balance sheet only"], ans: 1, exp: "CapEx flows out as Investing Cash Flow on the CFS, then sits as PP&E on the balance sheet, slowly depreciating through the income statement." },
-          { q: "How do you know the three statements 'balance'?", opts: ["Net income equals cash flow","The ending cash on the CFS equals the change in cash on the balance sheet","Assets equal revenue","Total expenses equal total assets"], ans: 1, exp: "The net change in cash from the cash flow statement must equal the change in the cash line on the balance sheet. That's the final check." }
         ]
       }
     ]
