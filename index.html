@@ -27,7 +27,6 @@
   .stat-pill .icon { font-size: 18px; }
   .stat-pill.streak { color: #ff9600; }
   .stat-pill.xp { color: var(--green); }
-  .stat-pill.hearts { color: var(--red); }
 
   /* LAYOUT */
   .app { max-width: 860px; margin: 0 auto; padding: 32px 20px; }
@@ -70,9 +69,6 @@
   .back-btn:hover { background: var(--border); }
   .lesson-progress-bar { flex: 1; background: var(--border); border-radius: 99px; height: 12px; overflow: hidden; }
   .lesson-progress-fill { background: var(--green); height: 100%; border-radius: 99px; transition: width 0.4s ease; }
-  .hearts-display { display: flex; gap: 4px; }
-  .heart { font-size: 20px; transition: all 0.3s; }
-  .heart.lost { filter: grayscale(1); opacity: 0.3; transform: scale(0.8); }
 
   .lesson-title { font-size: 14px; font-weight: 700; color: var(--gray-dark); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
   .lesson-content-card { background: var(--white); border-radius: 20px; border: 2px solid var(--border); padding: 28px; margin-bottom: 24px; }
@@ -232,25 +228,12 @@
     <button class="nav-formula-btn" onclick="showScreen('formulas');renderFormulas()">📐 Formulas</button>
     <div class="stat-pill streak"><span class="icon">🔥</span><span id="nav-streak">0</span></div>
     <div class="stat-pill xp"><span class="icon">⭐</span><span id="nav-xp">0</span> XP</div>
-    <div class="stat-pill hearts"><span id="nav-hearts">❤️❤️❤️</span></div>
   </div>
 </nav>
 
 <!-- CONFETTI -->
 <div class="confetti-container" id="confetti-container"></div>
 
-<!-- MODAL: No Hearts -->
-<div class="modal-overlay" id="modal-nolives">
-  <div class="modal">
-    <div style="font-size:60px;margin-bottom:12px">💔</div>
-    <h3>You're out of hearts!</h3>
-    <p>Hearts refill when you start a new study session. Come back tomorrow or keep practicing the material — you've got this!</p>
-    <div class="modal-btns">
-      <button class="modal-btn primary" onclick="refillHearts()">Refill Hearts (Practice Mode)</button>
-      <button class="modal-btn secondary" onclick="closeModal('modal-nolives');showScreen('home')">Back to Home</button>
-    </div>
-  </div>
-</div>
 
 <!-- SCREENS -->
 <div class="app">
@@ -276,7 +259,6 @@
     <div class="lesson-header">
       <button class="back-btn" onclick="confirmBack()">✕</button>
       <div class="lesson-progress-bar"><div class="lesson-progress-fill" id="lesson-progress-fill" style="width:0%"></div></div>
-      <div class="hearts-display" id="hearts-display"></div>
     </div>
     <div id="lesson-body"></div>
   </div>
@@ -1575,7 +1557,6 @@ Net Income = EBIT − Interest − Taxes</div>
 // ─── STATE ───────────────────────────────────────────────────────────────────
 const DEFAULT_STATE = {
   xp: 0, streak: 0, lastDate: null,
-  hearts: 5, maxHearts: 5,
   completed: {}, // { "modId-lessonIdx": { score, total, xpEarned } }
   missed: {},    // { "modId-lessonIdx": [qIdx, ...] }
   dailyChallengeDate: null,
@@ -1584,7 +1565,7 @@ const DEFAULT_STATE = {
 let state = JSON.parse(localStorage.getItem('fa_state') || 'null') || { ...DEFAULT_STATE };
 if (!state.missed) state.missed = {};
 if (!state.dailyChallengeDate) state.dailyChallengeDate = null;
-let session = { modId: null, lessonIdx: null, step: 0, score: 0, wrong: 0, hearts: 5 };
+let session = { modId: null, lessonIdx: null, step: 0, score: 0, wrong: 0 };
 
 function save() { localStorage.setItem('fa_state', JSON.stringify(state)); }
 
@@ -1620,8 +1601,6 @@ function showScreen(id) {
 function updateNav() {
   document.getElementById('nav-streak').textContent = state.streak;
   document.getElementById('nav-xp').textContent = state.xp;
-  const h = session.hearts;
-  document.getElementById('nav-hearts').textContent = '❤️'.repeat(h) + ('🖤'.repeat(Math.max(0, state.maxHearts - h)));
 }
 
 function updateHomeXP() {
@@ -1634,7 +1613,6 @@ function updateHomeXP() {
 
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 function openModal(id) { document.getElementById(id).classList.add('show'); }
-function refillHearts() { session.hearts = state.maxHearts; updateNav(); renderHearts(); closeModal('modal-nolives'); }
 
 // ─── HOME ────────────────────────────────────────────────────────────────────
 function getMissedCount() {
@@ -1730,9 +1708,7 @@ function renderHome() {
 
 // ─── LESSON ──────────────────────────────────────────────────────────────────
 function startLesson(modId, lessonIdx) {
-  session = { modId, lessonIdx, step: 0, score: 0, wrong: 0, hearts: state.hearts };
-  session.hearts = Math.min(session.hearts, state.maxHearts);
-  if (session.hearts <= 0) { openModal('modal-nolives'); return; }
+  session = { modId, lessonIdx, step: 0, score: 0, wrong: 0 };
   showScreen('lesson');
   renderLessonStep();
 }
@@ -1743,7 +1719,6 @@ function renderLessonStep() {
   const totalSteps = 1 + lesson.quiz.length; // content + quiz questions
   const pct = session.step / totalSteps * 100;
   document.getElementById('lesson-progress-fill').style.width = pct + '%';
-  renderHearts();
   updateNav();
 
   const body = document.getElementById('lesson-body');
@@ -1771,15 +1746,6 @@ function renderLessonStep() {
   }
 }
 
-function renderHearts() {
-  const d = document.getElementById('hearts-display');
-  if (!d) return;
-  let h = '';
-  for (let i = 0; i < state.maxHearts; i++) {
-    h += `<span class="heart${i >= session.hearts ? ' lost' : ''}">❤️</span>`;
-  }
-  d.innerHTML = h;
-}
 
 function selectAnswer(idx) {
   const lesson = CURRICULUM[session.modId].lessons[session.lessonIdx];
@@ -1811,12 +1777,9 @@ function selectAnswer(idx) {
     }
   } else {
     session.wrong++;
-    session.hearts = Math.max(0, session.hearts - 1);
     // Add to missed pile
     if (!state.missed[key]) state.missed[key] = [];
     if (!state.missed[key].includes(qIdx)) state.missed[key].push(qIdx);
-    renderHearts();
-    updateNav();
   }
 
   document.getElementById('continue-quiz-btn').style.display = 'block';
@@ -1853,7 +1816,6 @@ function finishLesson() {
     state.completed[key] = { score, total, xpEarned };
     state.xp += prev ? Math.max(0, xpEarned - prev.xpEarned) : xpEarned;
   }
-  state.hearts = session.hearts;
   save();
 
   // Confetti if decent score
@@ -1922,7 +1884,7 @@ function startReviewSession() {
   if (queue.length === 0) return;
   // Shuffle
   queue.sort(() => Math.random() - 0.5);
-  session = { modId: null, lessonIdx: null, step: 0, score: 0, wrong: 0, hearts: state.maxHearts, isReview: true, reviewQueue: queue, reviewIdx: 0 };
+  session = { modId: null, lessonIdx: null, step: 0, score: 0, wrong: 0, isReview: true, reviewQueue: queue, reviewIdx: 0 };
   showScreen('lesson');
   renderReviewQuestion();
 }
@@ -1936,7 +1898,6 @@ function renderReviewQuestion() {
   const q = lesson.quiz[qIdx];
   const pct = session.reviewIdx / queue.length * 100;
   document.getElementById('lesson-progress-fill').style.width = pct + '%';
-  document.getElementById('hearts-display').innerHTML = '';
   updateNav();
   const body = document.getElementById('lesson-body');
   body.innerHTML = `
