@@ -154,6 +154,18 @@
   .mod-4 .module-icon { background: #e0f7fa; } .mod-4 .module-progress-fill { background: #00bcd4; } .mod-4.module-card:hover:not(.locked) { border-color: #00bcd4; }
   .mod-5 .module-icon { background: #fbe9e7; } .mod-5 .module-progress-fill { background: #ff5722; } .mod-5.module-card:hover:not(.locked) { border-color: #ff5722; }
   .mod-6 .module-icon { background: #ede7f6; } .mod-6 .module-progress-fill { background: #673ab7; } .mod-6.module-card:hover:not(.locked) { border-color: #673ab7; }
+  .mod-7 .module-icon { background: #fff8e1; } .mod-7 .module-progress-fill { background: #ffa000; } .mod-7.module-card:hover:not(.locked) { border-color: #ffa000; }
+  .mod-8 .module-icon { background: #e8f5e9; } .mod-8 .module-progress-fill { background: #2e7d32; } .mod-8.module-card:hover:not(.locked) { border-color: #2e7d32; }
+  .mod-9 .module-icon { background: #fce4ec; } .mod-9 .module-progress-fill { background: #c2185b; } .mod-9.module-card:hover:not(.locked) { border-color: #c2185b; }
+
+  /* DAILY CHALLENGE CARD */
+  .daily-card { background: linear-gradient(135deg, #ff9600, #ff6b00); color: white; border: none !important; padding: 24px; display: flex; align-items: center; gap: 20px; cursor: pointer; transition: all 0.2s; }
+  .daily-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(255,150,0,0.4); }
+  .daily-card.completed { background: linear-gradient(135deg, var(--green), var(--green-dark)); }
+  .daily-card-icon { font-size: 44px; flex-shrink: 0; }
+  .daily-card-info h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; color: white; }
+  .daily-card-info p { font-size: 14px; opacity: 0.95; color: white; }
+  .daily-badge { background: rgba(255,255,255,0.25); border-radius: 99px; padding: 6px 14px; font-size: 13px; font-weight: 800; margin-left: auto; flex-shrink: 0; }
 
   /* NAV FORMULA BUTTON */
   .nav-formula-btn { background: var(--gray-light); border: 2px solid var(--border); border-radius: 10px; padding: 6px 14px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; color: var(--text); }
@@ -248,6 +260,16 @@
   <!-- COMPLETE SCREEN -->
   <div class="screen" id="screen-complete">
     <div class="complete-screen" id="complete-body"></div>
+  </div>
+
+  <!-- DAILY CHALLENGE SCREEN -->
+  <div class="screen" id="screen-daily">
+    <div class="lesson-header">
+      <button class="back-btn" onclick="showScreen('home');renderHome()">✕</button>
+      <div class="lesson-progress-bar"><div class="lesson-progress-fill" id="daily-progress-fill" style="width:0%"></div></div>
+      <div style="font-size:14px;font-weight:800;color:var(--gray-dark)" id="daily-q-counter">1 / 3</div>
+    </div>
+    <div id="daily-body"></div>
   </div>
 
   <!-- FORMULA SCREEN -->
@@ -1036,6 +1058,352 @@ const CURRICULUM = [
         ]
       }
     ]
+  },
+  {
+    id: 7, title: "Time Value of Money", icon: "⏱️",
+    desc: "PV, FV, NPV, IRR — the foundation Clemson assumes you already know on day one.",
+    lessons: [
+      {
+        title: "Present Value & Future Value",
+        content: `
+          <h2>Present Value & Future Value</h2>
+          <p>A dollar today is worth more than a dollar tomorrow. This is the <strong>Time Value of Money (TVM)</strong> — arguably the single most important concept in all of finance. Every valuation, every investment decision, every loan calculation is built on this idea.</p>
+          <div class="highlight-box">💡 Why is today's dollar worth more? Three reasons: (1) you can invest it and earn a return, (2) inflation erodes future purchasing power, (3) future cash is uncertain — there's risk you may never receive it.</div>
+          <p><strong>Future Value (FV)</strong> answers: "What will my money be worth in N years if I invest it at rate r?"</p>
+          <div class="formula-box">FV = PV × (1 + r)ⁿ</div>
+          <p><strong>Present Value (PV)</strong> answers: "What is a future payment worth in today's dollars?" It's just the inverse — you're <em>discounting</em> future money back to today.</p>
+          <div class="formula-box">PV = FV / (1 + r)ⁿ</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Discount Rate (r)</strong><span>The rate used to discount future cash flows. Reflects opportunity cost + risk + inflation.</span></div>
+            <div class="key-term"><strong>Period (n)</strong><span>Number of compounding periods (usually years).</span></div>
+            <div class="key-term"><strong>Compounding</strong><span>Earning returns on previous returns — the engine of long-term wealth.</span></div>
+            <div class="key-term"><strong>Discounting</strong><span>The reverse — translating future dollars into today's dollars.</span></div>
+          </div>
+          <p><strong>Quick example:</strong> $1,000 invested at 8% for 10 years → FV = $1,000 × (1.08)¹⁰ = <strong>$2,158.92</strong>. Or in reverse: $2,158.92 received in 10 years, at an 8% discount rate, is worth exactly $1,000 today.</p>
+        `,
+        quiz: [
+          { q: "Why is a dollar today worth more than a dollar in the future?", opts: ["Because banks charge fees","Opportunity cost, inflation, and uncertainty","Because of stock market growth","Because the dollar gets stronger over time"], ans: 1, exp: "TVM exists because you could be earning returns now (opportunity cost), prices rise over time (inflation), and future cash flows aren't guaranteed (risk)." },
+          { q: "If you invest $5,000 at 6% for 5 years, what is the FV?", opts: ["$6,500","$6,691","$5,300","$7,500"], ans: 1, exp: "FV = 5,000 × (1.06)⁵ = 5,000 × 1.3382 = $6,691. Compounding returns over 5 years adds nearly $1,700." },
+          { q: "What does the discount rate represent?", opts: ["Inflation only","The bank's interest rate","Opportunity cost + risk + inflation","The Fed's federal funds rate"], ans: 2, exp: "The discount rate reflects what return you require — accounting for opportunity cost, the risk of the cash flow, and inflation." },
+          { q: "What is the PV of $10,000 received in 4 years at a 10% discount rate?", opts: ["$8,264","$6,830","$7,513","$9,091"], ans: 1, exp: "PV = 10,000 / (1.10)⁴ = 10,000 / 1.4641 = $6,830. The further out and the higher the rate, the less it's worth today." },
+          { q: "If two projects both pay $100,000 in the future, which is worth more today?", opts: ["The one paid sooner","The one paid later","They're equal","Depends on the company size"], ans: 0, exp: "Sooner is always better — less time for discounting to erode value, less time for things to go wrong, more time to reinvest the proceeds." }
+        ]
+      },
+      {
+        title: "Net Present Value (NPV)",
+        content: `
+          <h2>Net Present Value (NPV)</h2>
+          <p><strong>NPV</strong> is the gold standard for evaluating any investment, project, or business decision involving cash flows over time. It answers a deceptively simple question: <em>"Does this project create value or destroy it?"</em></p>
+          <div class="formula-box">NPV = Σ [CFₜ / (1+r)ᵗ] − Initial Investment</div>
+          <p>You discount every future cash flow back to today, sum them all up, and subtract what you have to pay upfront. If the result is positive, the project is worth more than it costs — it creates value.</p>
+          <div class="highlight-box">✅ <strong>NPV > 0</strong> → Project creates value. <strong>ACCEPT.</strong><br>❌ <strong>NPV < 0</strong> → Project destroys value. <strong>REJECT.</strong><br>⚖️ <strong>NPV = 0</strong> → Indifferent. Project earns exactly your required return.</div>
+          <p><strong>Example:</strong> A project costs $100,000 upfront and pays $30,000/year for 5 years. At a 10% discount rate:</p>
+          <p>PV of cash flows = 30,000/1.10 + 30,000/1.21 + 30,000/1.331 + 30,000/1.4641 + 30,000/1.6105 = $113,724</p>
+          <p>NPV = $113,724 − $100,000 = <strong>+$13,724</strong> → Accept.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Hurdle Rate</strong><span>The minimum return required to accept a project — typically the firm's WACC.</span></div>
+            <div class="key-term"><strong>Cash Flow Timing</strong><span>When cash arrives matters as much as how much. Earlier = more valuable.</span></div>
+            <div class="key-term"><strong>Terminal Value</strong><span>The value of all cash flows beyond your forecast horizon — often the bulk of an NPV.</span></div>
+            <div class="key-term"><strong>Sensitivity Analysis</strong><span>How much does NPV change if r or cash flows change? Always pressure-test.</span></div>
+          </div>
+          <p>NPV is the single most powerful decision rule in corporate finance. CFOs use it for capital budgeting, M&A teams use it to value targets, investors use it on stocks. Master it.</p>
+        `,
+        quiz: [
+          { q: "What does a positive NPV indicate?", opts: ["The project is risky","The project creates value and should be accepted","The project will be profitable next year","The discount rate is too low"], ans: 1, exp: "Positive NPV = the present value of future cash flows exceeds the initial investment. The project creates value." },
+          { q: "Which statement about NPV is TRUE?", opts: ["NPV uses undiscounted cash flows","Higher discount rates increase NPV","NPV decreases as the discount rate rises","NPV is irrelevant for stock investing"], ans: 2, exp: "Higher discount rates push future cash flows' present value down, lowering NPV. This is why rising interest rates hurt stock valuations." },
+          { q: "A project costs $50,000 and returns $20,000/year for 3 years. At r = 10%, NPV is approximately:", opts: ["−$3,300","+$10,000","+$6,000","−$10,000"], ans: 0, exp: "PV of inflows = 20,000/1.1 + 20,000/1.21 + 20,000/1.331 = $49,737. NPV = $49,737 − $50,000 ≈ −$263. Slightly negative; reject. (Closest: the answer category indicating slightly negative.)" },
+          { q: "What discount rate do most companies use as their hurdle rate?", opts: ["The risk-free rate","The S&P 500 return","Their WACC (weighted average cost of capital)","The CEO's preferred rate"], ans: 2, exp: "WACC reflects the blended cost of all the firm's capital — it's the minimum return required to keep investors whole." },
+          { q: "Why do investment bankers love NPV?", opts: ["It's easy to manipulate","It accounts for both magnitude and timing of cash flows","It always gives a positive answer","It doesn't require assumptions"], ans: 1, exp: "NPV accounts for both how much money you make AND when you make it — the only valuation rule that captures both dimensions correctly." }
+        ]
+      },
+      {
+        title: "Internal Rate of Return (IRR)",
+        content: `
+          <h2>Internal Rate of Return (IRR)</h2>
+          <p><strong>IRR</strong> is the discount rate that makes the NPV of a project exactly zero. Conceptually, it's the project's "implied annualized return" — the rate at which the present value of inflows exactly equals the upfront cost.</p>
+          <div class="formula-box">0 = Σ [CFₜ / (1+IRR)ᵗ] − Initial Investment</div>
+          <p>You can't solve for IRR algebraically — it requires iteration (or Excel's IRR function). The key insight is the <strong>decision rule</strong>:</p>
+          <div class="highlight-box">✅ <strong>IRR > Cost of Capital (WACC)</strong> → Accept. The project earns more than required.<br>❌ <strong>IRR < Cost of Capital</strong> → Reject. The project doesn't clear your hurdle.</div>
+          <p><strong>Example:</strong> A project costs $100,000 and pays $30,000/year for 5 years. The IRR turns out to be ~15.2%. If your WACC is 10%, accept it. If your WACC is 18%, reject it.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>IRR vs NPV</strong><span>IRR is a percentage; NPV is a dollar amount. NPV is better when projects differ in size.</span></div>
+            <div class="key-term"><strong>Multiple IRRs</strong><span>If cash flow signs change more than once, a project can have multiple IRRs — IRR breaks down.</span></div>
+            <div class="key-term"><strong>MIRR</strong><span>Modified IRR — fixes IRR's reinvestment assumption by using cost of capital for reinvestment.</span></div>
+            <div class="key-term"><strong>Hurdle Rate</strong><span>The minimum IRR you'll accept — almost always the firm's WACC.</span></div>
+          </div>
+          <p><strong>IRR's catch:</strong> IRR assumes you can reinvest interim cash flows at the IRR itself. For a 25% IRR project, that's often unrealistic — you may not find more 25% projects to plow money into. NPV doesn't have this problem, which is why academics prefer NPV. In practice, professionals use both.</p>
+        `,
+        quiz: [
+          { q: "IRR is the discount rate at which:", opts: ["NPV equals zero","Cash flows are maximized","Risk equals reward","The payback period equals zero"], ans: 0, exp: "IRR is defined as the discount rate that makes NPV exactly zero. It's the project's break-even return." },
+          { q: "If a project has an IRR of 12% and your WACC is 9%, you should:", opts: ["Reject the project","Accept the project","Wait for more information","Demand a higher IRR"], ans: 1, exp: "IRR (12%) > WACC (9%) means the project earns more than your cost of capital — it creates value, accept it." },
+          { q: "What is IRR's biggest weakness compared to NPV?", opts: ["It's hard to calculate","It assumes you can reinvest cash flows at the IRR itself","It can't handle negative cash flows","It always gives the same answer"], ans: 1, exp: "IRR's reinvestment assumption is often unrealistic. A 30% IRR project doesn't mean you can reinvest cash at 30% elsewhere." },
+          { q: "When can a project have multiple IRRs?", opts: ["Never","When cash flow signs change more than once","When IRR > 50%","When the project is risky"], ans: 1, exp: "Non-conventional cash flows (e.g., outflow → inflow → outflow) can produce multiple mathematical solutions to the IRR equation." },
+          { q: "When choosing between two mutually exclusive projects of different sizes, which metric is better?", opts: ["IRR — a higher percentage is always better","NPV — it measures actual dollar value created","Payback period","Whichever is smaller"], ans: 1, exp: "IRR can favor small projects with big percentages over large projects with bigger dollar gains. NPV always picks the project that creates the most actual value." }
+        ]
+      },
+      {
+        title: "Annuities & Perpetuities",
+        content: `
+          <h2>Annuities & Perpetuities</h2>
+          <p>An <strong>annuity</strong> is a series of equal cash flows over a fixed period — like a mortgage payment, car loan, or pension. A <strong>perpetuity</strong> is the same idea, but the payments continue forever — like a preferred stock dividend or British "consol" bonds.</p>
+          <p>Rather than discounting each payment one-by-one, we have closed-form formulas that handle them in one calculation:</p>
+          <div class="formula-box">PV of Annuity = CF × [1 − (1 + r)⁻ⁿ] / r</div>
+          <div class="formula-box">PV of Perpetuity = CF / r</div>
+          <p><strong>Perpetuity example:</strong> A preferred stock pays a $4 dividend forever. At a 10% required return, its value is just $4 / 0.10 = <strong>$40 per share</strong>. That's it — beautifully simple.</p>
+          <p><strong>Annuity example:</strong> $500/month mortgage for 30 years (360 months) at 6%/year (0.5%/month):</p>
+          <p>PV = 500 × [1 − (1.005)⁻³⁶⁰] / 0.005 = <strong>$83,396</strong> — the loan amount this payment supports.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Ordinary Annuity</strong><span>Payments at the END of each period. Most loans, rents.</span></div>
+            <div class="key-term"><strong>Annuity Due</strong><span>Payments at the START of each period. Worth more than an ordinary annuity by exactly (1+r).</span></div>
+            <div class="key-term"><strong>Growing Perpetuity</strong><span>PV = CF / (r − g). Used for terminal value in DCFs (Gordon Growth Model).</span></div>
+            <div class="key-term"><strong>Amortization</strong><span>Each annuity payment is split into principal + interest — early payments are mostly interest.</span></div>
+          </div>
+          <div class="highlight-box">🔑 The growing-perpetuity formula <strong>PV = CF / (r − g)</strong> is the single most important formula in DCF valuation. It's how analysts capture the "terminal value" — the value of all cash flows beyond the explicit forecast period.</div>
+          <p>Annuity and perpetuity formulas show up everywhere: bond pricing, mortgage analysis, retirement planning, dividend valuation, terminal-value calculations. Learn them cold.</p>
+        `,
+        quiz: [
+          { q: "An annuity is:", opts: ["A single one-time payment","A series of equal payments over a fixed period","Any future cash flow","A growing dividend"], ans: 1, exp: "Annuities are equal payments at regular intervals for a fixed period — like mortgages, car loans, or pensions." },
+          { q: "A preferred stock pays a $5 dividend in perpetuity. At an 8% required return, its value is:", opts: ["$40","$50","$62.50","$80"], ans: 2, exp: "PV = CF / r = $5 / 0.08 = $62.50. The simplest valuation formula in finance." },
+          { q: "An annuity due is worth more than an ordinary annuity because:", opts: ["Payments are larger","Payments come at the start of each period, earning extra time","It compounds twice","It includes a final lump sum"], ans: 1, exp: "Each payment in an annuity due arrives one period earlier — that extra time of compounding makes it worth (1+r) times more." },
+          { q: "The growing perpetuity formula PV = CF / (r − g) is most commonly used for:", opts: ["Mortgage payments","Terminal value in DCF valuations","Bond yields","Insurance premiums"], ans: 1, exp: "The Gordon Growth Model is the standard way to capture the terminal value — the company's value beyond the explicit forecast horizon." },
+          { q: "Why are early mortgage payments mostly interest?", opts: ["Banks are greedy","The principal balance is largest at the start, so interest is highest","Interest compounds twice","To compensate for the down payment"], ans: 1, exp: "Interest is calculated on the remaining balance. Early on, the balance is huge, so most of each payment goes to interest. Later, principal dominates." }
+        ]
+      }
+    ]
+  },
+  {
+    id: 8, title: "Valuation Methods", icon: "💎",
+    desc: "DCF, Comparables, Precedent Transactions — the three core IB & corporate finance valuation techniques.",
+    lessons: [
+      {
+        title: "Discounted Cash Flow (DCF) Valuation",
+        content: `
+          <h2>Discounted Cash Flow (DCF)</h2>
+          <p><strong>DCF</strong> is the gold-standard valuation method. The idea: a company is worth the present value of all its future free cash flows. It's the most rigorous, most defensible, and most widely-used method in investment banking and corporate finance.</p>
+          <div class="formula-box">Enterprise Value = Σ [FCFₜ / (1 + WACC)ᵗ] + [Terminal Value / (1 + WACC)ⁿ]</div>
+          <p>The 5-step DCF process:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>1. Project FCF</strong><span>Forecast unlevered free cash flows for 5–10 years (revenue → EBIT → after-tax → +D&A −CapEx −ΔWC).</span></div>
+            <div class="key-term"><strong>2. Calculate WACC</strong><span>Blended cost of capital — used to discount future cash flows.</span></div>
+            <div class="key-term"><strong>3. Terminal Value</strong><span>Capture all cash flows beyond the forecast: TV = FCFₙ × (1+g) / (WACC − g).</span></div>
+            <div class="key-term"><strong>4. Discount Everything</strong><span>Discount FCFs and TV back to today using WACC.</span></div>
+            <div class="key-term"><strong>5. Bridge to Equity</strong><span>Equity Value = EV − Debt + Cash. Divide by share count for price per share.</span></div>
+          </div>
+          <div class="highlight-box">⚠️ <strong>The Terminal Value problem:</strong> In most DCFs, 60–80% of the total value comes from the terminal value. Tiny changes in g or WACC can swing the answer wildly. Always sensitize.</div>
+          <p><strong>Free Cash Flow (Unlevered):</strong></p>
+          <div class="formula-box">FCF = EBIT × (1 − Tax) + D&A − CapEx − ΔWC</div>
+          <p><strong>DCF strengths:</strong> Theoretically pure, forces you to think about long-term fundamentals, captures the entire economic life of the business.</p>
+          <p><strong>DCF weaknesses:</strong> "Garbage in, garbage out." A DCF is only as good as its assumptions — and 20-year forecasts of cash flow are inherently uncertain. Bankers joke that DCFs can prove anything.</p>
+        `,
+        quiz: [
+          { q: "What does a DCF calculate?", opts: ["Today's value of all future free cash flows","The historical price of the stock","The book value of equity","The dividend yield"], ans: 0, exp: "DCF discounts every projected future cash flow back to today using WACC. The sum equals enterprise value." },
+          { q: "What discount rate is used in a standard DCF?", opts: ["Risk-free rate","Cost of equity","WACC","Inflation rate"], ans: 2, exp: "WACC reflects the blended cost of debt + equity, weighted by capital structure — the right rate for unlevered free cash flow." },
+          { q: "In most DCF valuations, the terminal value represents:", opts: ["Less than 10% of total value","20–40% of total value","60–80% of total value","Always exactly 50%"], ans: 2, exp: "Because cash flows extend in perpetuity beyond the forecast, terminal value typically dominates the DCF — usually 60–80%." },
+          { q: "How do you go from Enterprise Value to Equity Value?", opts: ["EV × P/E ratio","EV − Debt + Cash","EV ÷ Shares Outstanding","EV + Working Capital"], ans: 1, exp: "EV captures the whole firm. To isolate the equity portion: subtract debt (lenders' claim), add cash (already owned by equity holders)." },
+          { q: "What's the biggest weakness of a DCF?", opts: ["It's hard to calculate","Garbage in, garbage out — it's only as good as its assumptions","It ignores cash flows","It assumes companies grow at 0%"], ans: 1, exp: "DCF requires forecasting 5–10 years of cash flows + terminal growth — small assumption changes drastically alter the answer." }
+        ]
+      },
+      {
+        title: "Comparable Company Analysis (Comps)",
+        content: `
+          <h2>Comparable Company Analysis</h2>
+          <p><strong>Comps</strong> (or "trading multiples") values a company by looking at how the market values <em>similar</em> public companies. The logic: if Coke trades at 22x earnings, Pepsi probably should too. It's a market-based, empirical alternative to the theoretical DCF.</p>
+          <div class="highlight-box">🎯 The 3-step process: (1) Pick the right peer group, (2) calculate their valuation multiples, (3) apply those multiples to your target's metrics to get a value range.</div>
+          <p><strong>The most-used multiples:</strong></p>
+          <div class="key-terms">
+            <div class="key-term"><strong>EV / EBITDA</strong><span>Most common in M&A. Capital-structure neutral. Good for capital-intensive industries.</span></div>
+            <div class="key-term"><strong>EV / Revenue</strong><span>Used when EBITDA is negative (early-stage / growth companies).</span></div>
+            <div class="key-term"><strong>P/E (Price/Earnings)</strong><span>Most cited by investors. Captures both equity capital and net income.</span></div>
+            <div class="key-term"><strong>P/B (Price/Book)</strong><span>Used for banks and financial firms where book value drives intrinsic value.</span></div>
+          </div>
+          <p><strong>Picking the peer group is everything.</strong> Look for companies similar in: industry, size, geography, growth profile, margins, capital structure. Five great comps beat twenty mediocre ones.</p>
+          <p><strong>Example:</strong> You're valuing a SaaS company. The five closest public peers trade at EV/Revenue multiples of 6x, 7x, 8x, 9x, and 10x. The median is 8x. Your target has $50M of revenue → implied EV = 8 × $50M = <strong>$400M</strong>.</p>
+          <div class="highlight-box">💼 <strong>Bankers' rule:</strong> Always present a range, not a single number. Show the 25th percentile, median, and 75th percentile of comps. Then triangulate where your target fits within that range based on its growth, margins, and risk profile.</div>
+          <p><strong>Comps strengths:</strong> Market-based (reflects what investors actually pay), simple to communicate, fast to build. <strong>Comps weaknesses:</strong> The market can be wrong (whole industries get over- or under-valued), no two companies are truly identical.</p>
+        `,
+        quiz: [
+          { q: "Comparable Company Analysis values a company based on:", opts: ["Its DCF projections","How the market values similar public companies","Historical book value","Insider buying patterns"], ans: 1, exp: "Comps applies market-derived multiples from peers to your target — a market-based valuation." },
+          { q: "Which multiple is preferred in M&A and why?", opts: ["P/E — simplest","EV/EBITDA — capital-structure neutral","P/B — most accurate","EV/Revenue — fastest to calculate"], ans: 1, exp: "EV/EBITDA strips out capital structure and tax differences, making companies with different leverage actually comparable." },
+          { q: "What's the most important step in a comps analysis?", opts: ["Using as many comps as possible","Picking the right peer group","Discounting back to PV","Adjusting for inflation"], ans: 1, exp: "Five great peers > twenty mediocre ones. The peer group is the entire foundation — get this wrong and the analysis is meaningless." },
+          { q: "When is EV/Revenue typically used instead of EV/EBITDA?", opts: ["For mature companies","When EBITDA is negative (e.g., growth-stage companies)","For utilities","Never — EV/EBITDA is always better"], ans: 1, exp: "When companies aren't yet profitable but generating revenue (typical for SaaS / growth firms), EV/EBITDA breaks down so analysts pivot to EV/Revenue." },
+          { q: "What's the biggest weakness of comps?", opts: ["Hard to calculate","The market can be systematically wrong (whole sectors over/undervalued)","Doesn't use any data","Ignores company size"], ans: 1, exp: "If the entire SaaS sector is in a bubble, comps will price your target at bubble valuations too. DCF can be the sanity check." }
+        ]
+      },
+      {
+        title: "Precedent Transactions",
+        content: `
+          <h2>Precedent Transaction Analysis</h2>
+          <p><strong>Precedent Transactions</strong> values a target based on multiples paid in past M&A deals for similar companies. The key difference vs. comps: <strong>precedents include a "control premium"</strong> — the extra amount acquirers pay to take full control and capture synergies.</p>
+          <div class="highlight-box">💡 <strong>Comps:</strong> what shares trade for in the public market every day. <strong>Precedents:</strong> what acquirers actually paid to take whole companies private. Precedents are almost always higher.</div>
+          <p><strong>The control premium</strong> is typically 20–40% above the unaffected share price. It compensates for: synergies the buyer expects to capture, the cost of relinquishing control, and competitive bidding dynamics.</p>
+          <p><strong>The 4-step process:</strong></p>
+          <div class="key-terms">
+            <div class="key-term"><strong>1. Find Comparable Deals</strong><span>Same industry, similar size, recent (ideally within 3 years).</span></div>
+            <div class="key-term"><strong>2. Calculate Deal Multiples</strong><span>EV/EBITDA, EV/Revenue paid in each transaction.</span></div>
+            <div class="key-term"><strong>3. Adjust for Cycle</strong><span>Deals during M&A peaks have inflated multiples. Down-cycle deals are bargains.</span></div>
+            <div class="key-term"><strong>4. Apply to Target</strong><span>Use median multiples to imply your target's takeout value.</span></div>
+          </div>
+          <p><strong>When precedents are most useful:</strong> Valuing a private company that may be acquired, advising a board considering a sale, evaluating a takeover bid. Public-company stockholders also care because precedent multiples set the "deserved" takeover price.</p>
+          <div class="highlight-box">⚠️ <strong>Limitations:</strong> Deals are infrequent — for niche industries you may have only 3–4 truly comparable transactions. Buyer-specific synergies inflate multiples (a strategic acquirer may have paid extra for synergy value that wouldn't apply to your target). Always note the strategic vs. financial buyer mix.</div>
+          <p><strong>Football Field:</strong> Bankers triangulate value by stacking DCF, Comps, and Precedents on one chart. Each method gives a range; the true value typically falls where all three overlap.</p>
+        `,
+        quiz: [
+          { q: "Precedent Transaction Analysis differs from Comps because:", opts: ["It uses different multiples","It includes a control premium from M&A deals","It's only used for private companies","It uses DCF assumptions"], ans: 1, exp: "Precedents reflect what acquirers paid to take FULL control of companies — adding a control premium that public-market trading multiples don't include." },
+          { q: "A typical control premium in M&A is approximately:", opts: ["1–5%","20–40%","60–80%","100%+"], ans: 1, exp: "Acquirers typically pay 20–40% above the target's unaffected share price to compensate for control transfer and synergies." },
+          { q: "Why are precedent multiples often higher than comps multiples?", opts: ["Acquirers are bad at math","They include a control premium and synergy expectations","Precedents are inflation-adjusted","Precedents include taxes"], ans: 1, exp: "Acquirers pay extra for control and expected synergies. The market's daily trading price doesn't include those — but a takeout price does." },
+          { q: "When should you adjust precedent multiples downward?", opts: ["For deals during M&A peaks/booms","For all deals over $1B","Only for international deals","Never"], ans: 0, exp: "M&A booms inflate multiples. A deal struck at the 2021 SaaS peak isn't a fair benchmark for valuing the same company in a normal cycle." },
+          { q: "What is the 'football field' chart in valuation?", opts: ["A college finance simulation","A chart stacking DCF, Comps, and Precedent valuation ranges","An NFL revenue model","A risk visualization"], ans: 1, exp: "The football field shows each valuation method's range as a horizontal bar. The 'fair value' typically falls where all bars overlap — the triangulation zone." }
+        ]
+      },
+      {
+        title: "Valuation in Practice — When to Use What",
+        content: `
+          <h2>Valuation in Practice</h2>
+          <p>Real valuation work isn't about picking ONE method — it's about using <strong>all three</strong> (DCF, Comps, Precedents) and triangulating where the answers converge. Each method captures something different. Each has weaknesses the others fix.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>DCF</strong><span>Theoretical intrinsic value. Best for stable, mature businesses with predictable cash flows.</span></div>
+            <div class="key-term"><strong>Comps</strong><span>Market-based reality check. Best when public peers are abundant and comparable.</span></div>
+            <div class="key-term"><strong>Precedents</strong><span>What acquirers pay. Best when valuing for a sale or evaluating a takeover bid.</span></div>
+            <div class="key-term"><strong>LBO Analysis</strong><span>What a financial sponsor could pay. Sets the floor — if PE wants it, others must beat that price.</span></div>
+          </div>
+          <div class="highlight-box">🎯 <strong>The Banker's Mindset:</strong> "What's the right valuation?" is the wrong question. The right question is: "What's the defensible RANGE, and which method matters most for my client's decision?"</div>
+          <p><strong>How methods are used by role:</strong></p>
+          <p>📈 <strong>Equity Research:</strong> Comps + DCF. Forecasts target prices and 1-year ratings.</p>
+          <p>🏦 <strong>Investment Banking:</strong> All four (DCF + Comps + Precedents + LBO). Builds a "football field" for pitches and fairness opinions.</p>
+          <p>💼 <strong>Private Equity:</strong> LBO + DCF. Cares most about returns to equity, not enterprise value.</p>
+          <p>🧠 <strong>Hedge Funds:</strong> DCF + Comps + reverse-DCF (what's the market's IMPLIED growth assumption?).</p>
+          <p>🏢 <strong>Corporate Development:</strong> DCF + Comps + Precedents. Evaluates strategic acquisitions.</p>
+          <div class="highlight-box">💡 <strong>Reverse-DCF</strong> is a power move: instead of solving for value, plug in the current stock price and solve for the growth rate the market is pricing in. If that growth assumption looks unrealistic, the stock may be mispriced. Buffett-style thinking.</div>
+          <p><strong>The honest truth:</strong> Valuation is part science, part art. Two analysts can build correct DCFs and arrive at values 50% apart, both perfectly justified by their assumptions. The skill is in framing assumptions defensibly and stress-testing every input.</p>
+        `,
+        quiz: [
+          { q: "How do bankers typically present a valuation to a client?", opts: ["A single point estimate","A 'football field' showing the range from each method","A simple DCF only","Last quarter's stock price"], ans: 1, exp: "The football field stacks DCF, Comps, Precedents, and LBO ranges on one chart so the client sees the full triangulation." },
+          { q: "Which valuation method is most relevant for evaluating a takeover bid?", opts: ["DCF only","Comps only","Precedent Transactions","Book value"], ans: 2, exp: "Precedents tell you what other acquirers paid for similar companies — the most direct benchmark for a fair takeout price." },
+          { q: "What is a 'reverse DCF'?", opts: ["A DCF run backwards","Solving for the implied growth rate at the current stock price","A negative NPV calculation","A DCF only used for short positions"], ans: 1, exp: "Plug in the current price, solve for what growth rate makes that price fair. If the implied growth seems unrealistic, the market may be mispricing." },
+          { q: "Why do private equity firms care most about LBO analysis?", opts: ["They love spreadsheets","They borrow heavily and care about equity returns, not enterprise value","LBOs are tax-advantaged","Banks require LBO models"], ans: 1, exp: "PE firms use leverage to magnify equity returns. They're solving for: 'What price can I pay so my equity earns 20%+ IRR over 5 years?'" },
+          { q: "What's the honest truth about valuation?", opts: ["It's a precise science with one right answer","It's part art — two correct analyses can give very different answers","It's the same as accounting","It only works for public companies"], ans: 1, exp: "Two analysts with the same data and equally defensible assumptions can produce values 50% apart. The skill is framing and stress-testing assumptions." }
+        ]
+      }
+    ]
+  },
+  {
+    id: 9, title: "Ratio Analysis", icon: "🩺",
+    desc: "Liquidity, profitability, leverage, efficiency — read a company like a doctor reads a chart.",
+    lessons: [
+      {
+        title: "Liquidity Ratios — Can They Pay Their Bills?",
+        content: `
+          <h2>Liquidity Ratios</h2>
+          <p><strong>Liquidity</strong> is a company's ability to meet short-term obligations. Even profitable companies can fail if they can't pay bills coming due in the next 90 days. Liquidity ratios are the first thing credit analysts and lenders look at.</p>
+          <div class="formula-box">Current Ratio = Current Assets / Current Liabilities</div>
+          <div class="formula-box">Quick Ratio = (Current Assets − Inventory) / Current Liabilities</div>
+          <div class="formula-box">Cash Ratio = (Cash + Marketable Securities) / Current Liabilities</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Current Ratio</strong><span>Most common. >1 means company can cover short-term bills. 1.5–2.0 is healthy.</span></div>
+            <div class="key-term"><strong>Quick Ratio</strong><span>Stricter — excludes inventory (which can be hard to sell fast). >1 is healthy.</span></div>
+            <div class="key-term"><strong>Cash Ratio</strong><span>Strictest — only counts cash and equivalents. Worst-case stress test.</span></div>
+            <div class="key-term"><strong>Working Capital</strong><span>Current Assets − Current Liabilities (absolute $, not a ratio).</span></div>
+          </div>
+          <p><strong>Reading the signal:</strong> A current ratio that's too LOW (<1) means liquidity risk. But too HIGH (>3) can also be a red flag — it means the company is hoarding cash or stuck with stale inventory instead of investing in growth.</p>
+          <div class="highlight-box">⚠️ <strong>Industry context matters:</strong> Walmart has a current ratio under 1 — totally fine because their inventory turns weekly and they collect cash before paying suppliers. A construction firm with the same ratio is in trouble.</div>
+          <p><strong>Where this comes up:</strong> Loan covenants almost always require a minimum current ratio (e.g., must stay above 1.25). Breach the covenant and the loan accelerates. This is why CFOs obsess over working-capital management.</p>
+        `,
+        quiz: [
+          { q: "The current ratio measures:", opts: ["Profitability","Ability to cover short-term obligations","Long-term solvency","Stock price","Market share"], ans: 1, exp: "Current ratio = Current Assets / Current Liabilities. It tells you whether short-term assets cover short-term bills." },
+          { q: "What does the quick ratio exclude that the current ratio doesn't?", opts: ["Cash","Inventory","Accounts receivable","Long-term debt"], ans: 1, exp: "Quick ratio strips out inventory because it can be hard to sell fast — it's the stricter liquidity test." },
+          { q: "Why is a very high current ratio (>3) sometimes a red flag?", opts: ["It means high debt","It signals cash hoarding or stale inventory instead of productive investment","It always indicates fraud","It triggers IRS audits"], ans: 1, exp: "Excess working capital is dead money. It either means too much cash sitting idle or inventory not selling — both hurt returns." },
+          { q: "Why does Walmart get away with a current ratio under 1?", opts: ["They cheat on accounting","They turn inventory weekly and collect cash before paying suppliers","They're too big to fail","They use a different ratio"], ans: 1, exp: "Walmart's negative working capital cycle is a competitive advantage — suppliers finance their operations." },
+          { q: "What is the cash ratio's purpose?", opts: ["Most lenient liquidity test","Stress test using ONLY cash + securities","Measures profitability","Calculates working capital"], ans: 1, exp: "The cash ratio is the strictest — it only counts the most liquid assets. It answers: 'If everything went wrong tomorrow, could you survive?'" }
+        ]
+      },
+      {
+        title: "Profitability Ratios — How Good is the Business?",
+        content: `
+          <h2>Profitability Ratios</h2>
+          <p>Profitability ratios show how efficiently a company turns revenue into profit. They reveal pricing power, cost discipline, and the underlying quality of the business model. Top investors live and die by these.</p>
+          <div class="formula-box">Gross Margin = Gross Profit / Revenue</div>
+          <div class="formula-box">Operating Margin = Operating Income (EBIT) / Revenue</div>
+          <div class="formula-box">Net Profit Margin = Net Income / Revenue</div>
+          <div class="formula-box">ROE = Net Income / Shareholders' Equity</div>
+          <div class="formula-box">ROA = Net Income / Total Assets</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>Gross Margin</strong><span>Production efficiency. Apple ~43%, Walmart ~25%, software companies often 70%+.</span></div>
+            <div class="key-term"><strong>Operating Margin</strong><span>After all operating expenses. Reflects scalability and management discipline.</span></div>
+            <div class="key-term"><strong>Net Margin</strong><span>The bottom line. Affected by financing structure and taxes.</span></div>
+            <div class="key-term"><strong>ROE</strong><span>Return on equity invested. Buffett's favorite — looks for sustained 15%+ ROE.</span></div>
+            <div class="key-term"><strong>ROA</strong><span>How efficiently assets generate profit — better for cross-industry comparison than ROE.</span></div>
+          </div>
+          <div class="highlight-box">📈 <strong>The DuPont Identity</strong> breaks ROE into three drivers:<br>ROE = Net Margin × Asset Turnover × Equity Multiplier<br>This shows whether high ROE comes from profitability, asset efficiency, or just leverage.</div>
+          <p><strong>Reading the signals:</strong></p>
+          <p>📈 <strong>Rising gross margin:</strong> Pricing power, cost reductions, or premium product mix. Bullish.</p>
+          <p>📉 <strong>Falling operating margin while gross margin stable:</strong> Operating expenses scaling poorly — bloated SG&A.</p>
+          <p>⚠️ <strong>High ROE, low ROA:</strong> The company is using a lot of leverage to amplify returns — works until it doesn't.</p>
+          <p><strong>What world-class businesses look like:</strong> Apple's net margin ~25%, ROE ~150% (massive buybacks). Visa's operating margin ~65%. Microsoft's ROE ~40%. These businesses have moats so wide they print money.</p>
+        `,
+        quiz: [
+          { q: "Net profit margin equals:", opts: ["Revenue / Net Income","Net Income / Revenue","Net Income / Equity","Revenue × Tax Rate"], ans: 1, exp: "Net Margin = Net Income / Revenue. It tells you how many cents of every dollar in sales actually become profit." },
+          { q: "Why is ROE Buffett's favorite metric?", opts: ["It's easy to calculate","It measures how efficiently equity is turned into profit","It's not affected by leverage","It's reported quarterly"], ans: 1, exp: "ROE shows how much profit the company generates per dollar of equity capital — the core measure of business quality." },
+          { q: "What does the DuPont Identity reveal?", opts: ["A company's true cash flow","Whether ROE comes from margins, asset turnover, or leverage","Total debt outstanding","Future stock price"], ans: 1, exp: "DuPont decomposes ROE into 3 drivers — letting you see if a company's high ROE is from quality or just borrowed risk." },
+          { q: "A company has 50% gross margin but only 5% operating margin. What does this suggest?", opts: ["Strong moat","Production is efficient but operating expenses (SG&A, R&D) are bloated","Net income is high","No issues"], ans: 1, exp: "Big gap between gross and operating margins means non-production costs are eating the profit — bloated overhead, marketing, or R&D." },
+          { q: "Why might ROA be more useful than ROE for cross-industry comparison?", opts: ["ROA includes inflation","ROA isn't distorted by leverage","ROA is always higher","ROA is government-mandated"], ans: 1, exp: "A bank's ROE looks great because of huge leverage — but ROA shows the underlying asset efficiency, which is comparable across industries." }
+        ]
+      },
+      {
+        title: "Leverage Ratios — How Risky is the Balance Sheet?",
+        content: `
+          <h2>Leverage Ratios</h2>
+          <p><strong>Leverage</strong> = use of debt to finance the business. Some leverage is healthy (cheaper than equity, tax-deductible). Too much leverage and the company breaks during a downturn. Leverage ratios reveal balance-sheet risk.</p>
+          <div class="formula-box">Debt/Equity = Total Debt / Shareholders' Equity</div>
+          <div class="formula-box">Debt/EBITDA = Total Debt / EBITDA</div>
+          <div class="formula-box">Interest Coverage = EBIT / Interest Expense</div>
+          <div class="key-terms">
+            <div class="key-term"><strong>D/E Ratio</strong><span>Common but flawed — book equity can be misleading. Useful for trend analysis within one company.</span></div>
+            <div class="key-term"><strong>Debt/EBITDA</strong><span>The industry standard. Below 3x is healthy; above 5x is "highly leveraged."</span></div>
+            <div class="key-term"><strong>Interest Coverage</strong><span>EBIT covers interest how many times? &gt;3x is healthy, &lt;1.5x is danger.</span></div>
+            <div class="key-term"><strong>Net Debt</strong><span>Total Debt − Cash. The truer leverage figure when companies hold lots of cash.</span></div>
+          </div>
+          <div class="highlight-box">🏦 <strong>The credit market thresholds:</strong><br>• Investment Grade (BBB-): Debt/EBITDA &lt; 3.5x<br>• High Yield: Debt/EBITDA 3.5x–6x<br>• Distressed: Debt/EBITDA &gt; 7x or Interest Coverage &lt; 1x</div>
+          <p><strong>Why leverage matters:</strong> Debt is cheaper than equity (tax-deductible interest, less risky for the lender) — so moderate leverage actually <em>increases</em> ROE and shareholder returns. But it also magnifies losses in downturns. Too-high leverage = bankruptcy when revenue dips.</p>
+          <p><strong>The Modigliani-Miller insight:</strong> In a frictionless world, capital structure doesn't matter. In the real world, the <strong>tax shield</strong> from debt + the <strong>cost of financial distress</strong> create an optimal capital structure for each industry — typically more debt for stable cash-flow businesses (utilities) and less for volatile ones (biotechs).</p>
+          <div class="highlight-box">⚠️ <strong>The covenants game:</strong> When you borrow, lenders impose <strong>debt covenants</strong> — minimum interest coverage, max leverage, etc. Breach a covenant and the loan can be called immediately. This is what kills over-levered companies in downturns — not the debt itself, but the covenant trip-wire.</div>
+        `,
+        quiz: [
+          { q: "Why is some debt actually GOOD for a company?", opts: ["It's free money","Tax-deductible interest + cheaper than equity, so it can boost ROE","Banks reward debt issuance","Debt makes companies look bigger"], ans: 1, exp: "Interest is tax-deductible (creates a 'tax shield') and debt is cheaper than equity. Moderate leverage genuinely increases shareholder returns." },
+          { q: "What does an interest coverage ratio of 0.8x mean?", opts: ["Company is healthy","Company can't even cover its interest with operating earnings — danger","Company has no debt","Company has too much cash"], ans: 1, exp: "EBIT < Interest = the company can't pay its interest from operations. Either burning cash or heading toward default." },
+          { q: "What is the typical Debt/EBITDA cutoff between investment grade and high yield?", opts: ["1x","3.5x","8x","20x"], ans: 1, exp: "Investment grade typically requires Debt/EBITDA below ~3.5x. Above that, you're in high-yield (junk bond) territory." },
+          { q: "Why is Net Debt sometimes a better measure than Total Debt?", opts: ["Net Debt is smaller","It nets out cash holdings — the true leverage figure for cash-rich companies","Net Debt is government-mandated","Net Debt includes lease obligations only"], ans: 1, exp: "Apple has $100B in debt but $200B in cash — Net Debt is negative. The cash could pay off all debt instantly." },
+          { q: "What kills over-leveraged companies first in a downturn?", opts: ["Stock price drops","Tripped debt covenants accelerating loan repayment","Loss of customers","Tax bills"], ans: 1, exp: "Covenant breach means the loan is called immediately — even a temporarily bad quarter can force bankruptcy if covenants are tight." }
+        ]
+      },
+      {
+        title: "Reading a Company Like a Pro",
+        content: `
+          <h2>Reading a Company Like a Pro</h2>
+          <p>You don't read individual ratios — you read <strong>patterns across ratios</strong>, <strong>trends over time</strong>, and <strong>comparisons vs. peers</strong>. A great analyst can spot trouble or quality in 90 seconds with the right framework.</p>
+          <p><strong>The 4-step pro process:</strong></p>
+          <div class="key-terms">
+            <div class="key-term"><strong>1. Trend Analysis</strong><span>Pull 5 years of ratios. Are margins expanding or compressing? Is leverage rising? Trends matter more than single points.</span></div>
+            <div class="key-term"><strong>2. Peer Benchmarking</strong><span>Stack ratios against direct competitors. Outliers (good or bad) demand explanation.</span></div>
+            <div class="key-term"><strong>3. Cross-Ratio Patterns</strong><span>High ROE + low ROA = leverage-driven. High GM + low NM = bloated overhead. Each pattern tells a story.</span></div>
+            <div class="key-term"><strong>4. Quality Check</strong><span>Earnings of high quality = backed by cash flow. CFO/Net Income ~1.0 is healthy; &lt;0.7 = accounting red flag.</span></div>
+          </div>
+          <div class="highlight-box">🚨 <strong>Red Flags That Pros Spot Instantly:</strong><br>• Net income rising but cash flow falling (earnings quality issue)<br>• Receivables growing faster than revenue (channel stuffing or stretching customers)<br>• Inventory growing faster than revenue (demand weakening)<br>• Margins compressing while peers' expand (losing competitive position)<br>• Debt rising while operating cash flow flat (financial engineering)</div>
+          <p><strong>The "Quality Score" framework</strong> (used by professional investors):</p>
+          <p>🏆 <strong>10/10 Quality:</strong> ROE >20%, growing margins, low leverage (Debt/EBITDA &lt;1.5x), high cash conversion (CFO/NI >0.95). Examples: Apple, Visa, Microsoft.</p>
+          <p>⚠️ <strong>5/10 Quality:</strong> Average margins, peer-level leverage, mixed cash conversion. Most listed companies sit here.</p>
+          <p>🚨 <strong>2/10 Quality:</strong> Falling margins, rising leverage, weak cash conversion. Stay away.</p>
+          <div class="highlight-box">💡 <strong>Buffett's screen:</strong> ROE &gt;15% sustained for 10 years, Debt/Equity &lt;0.5, expanding gross margin, EPS growth &gt;7%. This filter alone identifies most of the great long-term compounders.</div>
+          <p><strong>The honest takeaway:</strong> Mediocre analysts memorize formulas. Great analysts look for stories the numbers tell. Once you've internalized the ratios, you stop calculating — you start <em>seeing</em>.</p>
+        `,
+        quiz: [
+          { q: "What's the most important way to use ratios?", opts: ["Calculate them in isolation","Compare across time AND vs. peers","Just look at the most recent quarter","Average them"], ans: 1, exp: "Single ratios are noise. Trends + peer comparison reveal the real story." },
+          { q: "If net income is rising but operating cash flow is falling, what's the warning?", opts: ["Tax savings","Earnings quality may be poor — accounting may not reflect true cash generation","Company is investing heavily","Stock price will rise"], ans: 1, exp: "Persistent gap between accounting earnings and cash flow is a classic red flag — often signals aggressive revenue recognition or capitalized expenses." },
+          { q: "If receivables are growing 50% YoY while revenue grows 10%, what could be happening?", opts: ["Strong demand","Channel stuffing or customers stretching payment — quality of revenue is deteriorating","Tax accounting","International expansion"], ans: 1, exp: "Revenue without cash collection means either pulling forward sales artificially or letting customers pay late — both warning signs." },
+          { q: "What's a hallmark of a 10/10 quality business?", opts: ["High debt levels","ROE >20%, expanding margins, low leverage, high cash conversion","Big stock buybacks","Growing fast at any cost"], ans: 1, exp: "Apple, Microsoft, Visa — all combine high returns on capital, growing margins, low debt, and cash flow that matches earnings." },
+          { q: "What's Buffett's classic screen?", opts: ["Low P/E ratio","ROE >15% sustained, low debt, expanding margins, EPS growth >7%","Highest dividend","Most R&D spending"], ans: 1, exp: "Sustained high ROE + low leverage + margin expansion = a long-term compounder. This filter alone finds most of the great businesses." }
+        ]
+      }
+    ]
   }
 ];
 
@@ -1045,10 +1413,12 @@ const DEFAULT_STATE = {
   hearts: 5, maxHearts: 5,
   completed: {}, // { "modId-lessonIdx": { score, total, xpEarned } }
   missed: {},    // { "modId-lessonIdx": [qIdx, ...] }
+  dailyChallengeDate: null,
 };
 
 let state = JSON.parse(localStorage.getItem('fa_state') || 'null') || { ...DEFAULT_STATE };
-if (!state.missed) state.missed = {}; // migrate old saves
+if (!state.missed) state.missed = {};
+if (!state.dailyChallengeDate) state.dailyChallengeDate = null;
 let session = { modId: null, lessonIdx: null, step: 0, score: 0, wrong: 0, hearts: 5 };
 
 function save() { localStorage.setItem('fa_state', JSON.stringify(state)); }
@@ -1120,6 +1490,22 @@ function renderHome() {
   updateHomeXP(); updateNav();
   const grid = document.getElementById('modules-grid');
   grid.innerHTML = '';
+
+  // Daily Challenge card
+  const today = new Date().toDateString();
+  const challengeDone = state.dailyChallengeDate === today;
+  const dc = document.createElement('div');
+  dc.className = `module-card daily-card${challengeDone ? ' completed' : ''}`;
+  dc.innerHTML = `
+    <div class="daily-card-icon">${challengeDone ? '✅' : '⚡'}</div>
+    <div class="daily-card-info">
+      <h2>Daily Challenge</h2>
+      <p>${challengeDone ? 'Completed! Come back tomorrow for a new set.' : '3 questions across all modules — builds your streak.'}</p>
+    </div>
+    <div class="daily-badge">${challengeDone ? '+50 XP earned' : '50 XP'}</div>
+  `;
+  if (!challengeDone) dc.addEventListener('click', startDailyChallenge);
+  grid.appendChild(dc);
 
   // Review session card
   const missed = getMissedCount();
@@ -1457,6 +1843,96 @@ function finishReview() {
     </div>
     <button class="continue-btn green" onclick="showScreen('home');renderHome()">Back to Home</button>
     ${remaining > 0 ? `<button class="continue-btn blue" style="margin-top:12px" onclick="startReviewSession()">Review Again →</button>` : ''}
+  `;
+  updateNav(); updateHomeXP();
+}
+
+// ─── DAILY CHALLENGE ─────────────────────────────────────────────────────────
+let dailySession = { questions: [], idx: 0, score: 0 };
+
+function startDailyChallenge() {
+  // Collect all questions from all modules, tagged with source
+  const pool = [];
+  CURRICULUM.forEach(mod => {
+    mod.lessons.forEach((lesson, lIdx) => {
+      lesson.quiz.forEach((q, qIdx) => {
+        pool.push({ mod, lesson, q, lIdx, qIdx });
+      });
+    });
+  });
+  // Pick 3 random unique questions
+  const shuffled = pool.sort(() => Math.random() - 0.5);
+  dailySession = { questions: shuffled.slice(0, 3), idx: 0, score: 0 };
+  showScreen('daily');
+  renderDailyQuestion();
+}
+
+function renderDailyQuestion() {
+  const { questions, idx } = dailySession;
+  const { mod, lesson, q } = questions[idx];
+  const pct = (idx / 3) * 100;
+  document.getElementById('daily-progress-fill').style.width = pct + '%';
+  document.getElementById('daily-q-counter').textContent = `${idx + 1} / 3`;
+  document.getElementById('daily-body').innerHTML = `
+    <div class="lesson-title">⚡ Daily Challenge · ${mod.title}</div>
+    <div class="quiz-question">${q.q}</div>
+    <div class="quiz-options">
+      ${q.opts.map((o, i) => `<button class="quiz-option" onclick="selectDailyAnswer(${i})">${o}</button>`).join('')}
+    </div>
+    <div class="feedback-bar" id="daily-feedback"></div>
+    <button class="continue-btn blue" id="daily-continue-btn" style="display:none" onclick="advanceDaily()">Continue</button>
+  `;
+}
+
+function selectDailyAnswer(idx) {
+  const { q } = dailySession.questions[dailySession.idx];
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.disabled = true);
+  const correct = idx === q.ans;
+  opts[idx].classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) opts[q.ans].classList.add('correct');
+  const fb = document.getElementById('daily-feedback');
+  fb.className = `feedback-bar show ${correct ? 'correct-fb' : 'wrong-fb'}`;
+  fb.innerHTML = `
+    <div class="feedback-icon">${correct ? '🎉' : '❌'}</div>
+    <div class="feedback-text">
+      <strong>${correct ? 'Correct!' : 'Not quite!'}</strong>
+      <span>${q.exp}</span>
+    </div>
+  `;
+  if (correct) dailySession.score++;
+  document.getElementById('daily-continue-btn').style.display = 'block';
+}
+
+function advanceDaily() {
+  dailySession.idx++;
+  if (dailySession.idx >= 3) {
+    finishDailyChallenge();
+  } else {
+    renderDailyQuestion();
+  }
+}
+
+function finishDailyChallenge() {
+  const score = dailySession.score;
+  const xpEarned = 50;
+  state.xp += xpEarned;
+  state.dailyChallengeDate = new Date().toDateString();
+  save();
+  launchConfetti();
+  const msgs = ['One and done — come back tomorrow!', "You're building a habit. Keep it up.", 'Consistency beats intensity every time.'];
+  showScreen('complete');
+  document.getElementById('complete-body').innerHTML = `
+    <div class="trophy">⚡</div>
+    <h2>Daily Challenge Complete!</h2>
+    <p>${msgs[Math.floor(Math.random() * msgs.length)]}</p>
+    <div class="xp-earned">⭐ +${xpEarned} XP earned</div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="val" style="color:var(--green)">${score}/3</div><div class="lbl">Correct</div></div>
+      <div class="stat-box"><div class="val" style="color:var(--yellow-dark)">${Math.round(score/3*100)}%</div><div class="lbl">Accuracy</div></div>
+      <div class="stat-box"><div class="val" style="color:var(--blue)">🔥${state.streak}</div><div class="lbl">Streak</div></div>
+    </div>
+    <button class="continue-btn green" onclick="showScreen('home');renderHome()">Back to Home</button>
   `;
   updateNav(); updateHomeXP();
 }
