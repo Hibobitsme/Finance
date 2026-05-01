@@ -1055,7 +1055,7 @@ function save() { localStorage.setItem('fa_state', JSON.stringify(state)); }
 
 function lessonKey(mId, lIdx) { return `${mId}-${lIdx}`; }
 function isDone(mId, lIdx) { return !!state.completed[lessonKey(mId, lIdx)]; }
-function isModUnlocked(mId) { return mId === 0 || allLessonsDone(mId - 1); }
+function isModUnlocked(mId) { return true; }
 function allLessonsDone(mId) {
   return CURRICULUM[mId].lessons.every((_, i) => isDone(mId, i));
 }
@@ -1145,9 +1145,8 @@ function renderHome() {
     const next = nextLesson(mod.id);
 
     const card = document.createElement('div');
-    card.className = `module-card mod-${mod.id}${unlocked ? '' : ' locked'}${doneCount === total ? ' completed' : ''}`;
+    card.className = `module-card mod-${mod.id}${doneCount === total ? ' completed' : ''}`;
     card.innerHTML = `
-      ${!unlocked ? '<div class="lock-badge">🔒</div>' : ''}
       <div class="module-header">
         <div class="module-icon">${mod.icon}</div>
         <div class="module-info">
@@ -1163,14 +1162,13 @@ function renderHome() {
       <div class="lesson-dots">
         ${mod.lessons.map((l, i) => {
           const done = isDone(mod.id, i);
-          const isCurrent = unlocked && !done && i === next;
-          const isLocked = !unlocked || (!done && i > next);
-          let cls = done ? 'done' : isCurrent ? 'current' : 'locked-dot';
-          return `<div class="lesson-dot ${cls}" title="${l.title}" onclick="${unlocked && !isLocked ? `startLesson(${mod.id},${i})` : ''}">${done ? '✓' : i + 1}</div>`;
+          const isCurrent = !done && i === next;
+          let cls = done ? 'done' : isCurrent ? 'current' : '';
+          return `<div class="lesson-dot ${cls}" title="${l.title}" onclick="startLesson(${mod.id},${i})">${done ? '✓' : i + 1}</div>`;
         }).join('')}
       </div>
     `;
-    if (unlocked) card.addEventListener('click', (e) => {
+    card.addEventListener('click', (e) => {
       if (e.target.classList.contains('lesson-dot')) return;
       const n = nextLesson(mod.id);
       if (n >= 0) startLesson(mod.id, n);
