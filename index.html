@@ -197,6 +197,29 @@
   .formula-box-sm { background: var(--yellow-light); border: 1.5px solid var(--yellow); border-radius: 8px; padding: 7px 12px; font-family: monospace; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
   .formula-item-note { font-size: 12px; color: var(--gray-dark); line-height: 1.4; }
   @media(max-width:600px) { .formula-grid { grid-template-columns: 1fr; } }
+
+  /* MODULE 10 COLOR */
+  .mod-10 .module-icon { background: #e3f2fd; } .mod-10 .module-progress-fill { background: #1565c0; } .mod-10.module-card:hover { border-color: #1565c0; }
+
+  /* GLOSSARY SCREEN */
+  .glossary-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .glossary-header h1 { font-size: 26px; font-weight: 800; }
+  .glossary-search-wrap { position: relative; margin-bottom: 24px; }
+  .glossary-search { width: 100%; padding: 14px 20px 14px 48px; font-size: 16px; border: 2px solid var(--border); border-radius: 14px; outline: none; background: var(--white); transition: border 0.2s; }
+  .glossary-search:focus { border-color: var(--blue); }
+  .glossary-search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 18px; pointer-events: none; }
+  .glossary-count { font-size: 13px; color: var(--gray-dark); margin-bottom: 16px; font-weight: 600; }
+  .glossary-category { margin-bottom: 28px; }
+  .glossary-cat-title { font-size: 13px; font-weight: 800; color: var(--gray-dark); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+  .glossary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .glossary-term { background: var(--white); border: 2px solid var(--border); border-radius: 14px; padding: 14px 16px; cursor: pointer; transition: all 0.15s; }
+  .glossary-term:hover { border-color: var(--blue); transform: translateY(-1px); }
+  .glossary-term-word { font-size: 15px; font-weight: 800; margin-bottom: 4px; color: var(--text); }
+  .glossary-term-def { font-size: 13px; color: var(--gray-dark); line-height: 1.45; }
+  .glossary-term.highlight { border-color: var(--blue); background: var(--blue-light); }
+  .glossary-empty { text-align: center; padding: 48px 20px; color: var(--gray-dark); }
+  .glossary-empty p { font-size: 16px; margin-top: 8px; }
+  @media(max-width:600px) { .glossary-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -205,6 +228,7 @@
 <nav class="nav">
   <div class="nav-logo">Finance<span>Academy</span></div>
   <div class="nav-stats">
+    <button class="nav-formula-btn" onclick="showScreen('glossary');renderGlossary()">📖 Glossary</button>
     <button class="nav-formula-btn" onclick="showScreen('formulas');renderFormulas()">📐 Formulas</button>
     <div class="stat-pill streak"><span class="icon">🔥</span><span id="nav-streak">0</span></div>
     <div class="stat-pill xp"><span class="icon">⭐</span><span id="nav-xp">0</span> XP</div>
@@ -279,6 +303,20 @@
       <h1>📐 Formula Reference</h1>
     </div>
     <div class="formula-grid" id="formula-body"></div>
+  </div>
+
+  <!-- GLOSSARY SCREEN -->
+  <div class="screen" id="screen-glossary">
+    <div class="glossary-header">
+      <button class="back-btn" onclick="showScreen('home');renderHome()">✕</button>
+      <h1>📖 Finance Glossary</h1>
+    </div>
+    <div class="glossary-search-wrap">
+      <span class="glossary-search-icon">🔍</span>
+      <input class="glossary-search" id="glossary-search" type="text" placeholder="Search 100 finance terms…" oninput="filterGlossary(this.value)">
+    </div>
+    <div class="glossary-count" id="glossary-count"></div>
+    <div id="glossary-body"></div>
   </div>
 
 </div>
@@ -1404,6 +1442,133 @@ const CURRICULUM = [
         ]
       }
     ]
+  },
+  {
+    id: 10, title: "Financial Statements Deep Dive", icon: "📋",
+    desc: "Read income statements, balance sheets, and cash flow statements like a professional — not just definitions, but interpretation.",
+    lessons: [
+      {
+        title: "The Income Statement",
+        content: `
+          <h2>The Income Statement</h2>
+          <p>The <strong>income statement</strong> (also called the P&L — Profit & Loss) shows how much money a company made and spent over a period of time (a quarter or year). It answers: <em>"Was the business profitable?"</em></p>
+          <div class="highlight-box">📌 Key principle: the income statement follows <strong>accrual accounting</strong> — revenue is recorded when earned, expenses when incurred, regardless of when cash actually moves. This is why income ≠ cash flow.</div>
+          <p><strong>The structure, top to bottom:</strong></p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Revenue (Top Line)</strong><span>Total sales. The starting point. Everything flows from here.</span></div>
+            <div class="key-term"><strong>COGS</strong><span>Cost of Goods Sold — direct costs to produce what was sold (materials, labor).</span></div>
+            <div class="key-term"><strong>Gross Profit</strong><span>Revenue − COGS. Shows production efficiency and pricing power.</span></div>
+            <div class="key-term"><strong>Operating Expenses</strong><span>SG&A (sales, general, admin), R&D, depreciation — indirect costs to run the business.</span></div>
+            <div class="key-term"><strong>EBIT</strong><span>Earnings Before Interest & Taxes — pure operating profit, unaffected by financing.</span></div>
+            <div class="key-term"><strong>Net Income (Bottom Line)</strong><span>After interest and taxes. What actually belongs to shareholders.</span></div>
+          </div>
+          <p><strong>Reading Apple's 2023 P&L in 5 seconds:</strong> Revenue $383B → Gross Profit $169B (44% margin — pricing power!) → Operating Income $114B (30% operating margin — extremely efficient) → Net Income $97B. That's a machine.</p>
+          <div class="formula-box">Gross Profit = Revenue − COGS
+EBIT = Gross Profit − Operating Expenses
+Net Income = EBIT − Interest − Taxes</div>
+          <p><strong>What to look for when reading an income statement:</strong></p>
+          <p>📈 <strong>Revenue growth</strong> — is the top line growing? At what rate vs. peers?</p>
+          <p>📊 <strong>Margin trends</strong> — are gross margins and operating margins expanding or compressing? Expanding = improving competitive position.</p>
+          <p>⚠️ <strong>One-time items</strong> — restructuring charges, asset write-downs, gains on asset sales. Strip these out to see "normalized" earnings.</p>
+          <p>🔍 <strong>EPS (Earnings Per Share)</strong> — Net Income ÷ Shares Outstanding. The single most-cited public-company metric.</p>
+        `,
+        quiz: [
+          { q: "What does the income statement show?", opts: ["Assets and liabilities at a point in time","Revenue, expenses, and profit over a time period","Cash inflows and outflows","Shareholder equity changes"], ans: 1, exp: "The income statement covers a period (quarter or year) and shows whether the business was profitable." },
+          { q: "What is COGS?", opts: ["Corporate Operating Government Standards","Cost of Goods Sold — direct costs to produce what was sold","Cash On General Statement","Cost of General Services"], ans: 1, exp: "COGS = direct production costs (materials, direct labor). Subtracting it from revenue gives gross profit — core production efficiency." },
+          { q: "Why is net income different from cash flow?", opts: ["Net income includes taxes, cash flow doesn't","Accrual accounting records revenue/expenses when earned, not when cash moves","They are always the same","Cash flow is always higher"], ans: 1, exp: "Under accrual accounting, revenue is booked when earned (not collected) and expenses when incurred (not paid). This creates gaps between profit and cash." },
+          { q: "Apple has revenue of $383B and gross profit of $169B. What is its gross margin?", opts: ["25%","44%","30%","55%"], ans: 1, exp: "Gross Margin = Gross Profit / Revenue = 169/383 = 44%. Exceptional for a company at that scale — shows enormous pricing power." },
+          { q: "What should you strip out to see 'normalized' earnings?", opts: ["Revenue","One-time items like restructuring charges and asset write-downs","Interest expense","Depreciation"], ans: 1, exp: "One-time items distort the true recurring earning power of the business. Analysts always adjust for these to see clean 'normalized' earnings." }
+        ]
+      },
+      {
+        title: "The Balance Sheet",
+        content: `
+          <h2>The Balance Sheet</h2>
+          <p>The <strong>balance sheet</strong> is a snapshot of what a company <em>owns</em> (assets) and what it <em>owes</em> (liabilities), at a specific point in time. The difference is what belongs to shareholders — <strong>equity</strong>.</p>
+          <div class="formula-box">Assets = Liabilities + Shareholders' Equity</div>
+          <p>This equation <em>always</em> balances — that's the law of double-entry accounting. Every transaction affects at least two items.</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Current Assets</strong><span>Cash, receivables, inventory — convertible to cash within 12 months.</span></div>
+            <div class="key-term"><strong>Non-Current Assets</strong><span>PP&E (plants, equipment), intangibles, goodwill — long-term investments.</span></div>
+            <div class="key-term"><strong>Current Liabilities</strong><span>Accounts payable, short-term debt, accrued expenses — due within 12 months.</span></div>
+            <div class="key-term"><strong>Long-Term Liabilities</strong><span>Long-term debt, deferred tax liabilities — due beyond 12 months.</span></div>
+            <div class="key-term"><strong>Shareholders' Equity</strong><span>Paid-in capital + retained earnings − treasury stock. The "book value."</span></div>
+            <div class="key-term"><strong>Goodwill</strong><span>Premium paid in acquisitions above fair value of net assets. Only appears after M&A.</span></div>
+          </div>
+          <p><strong>What the balance sheet tells you:</strong></p>
+          <p>💧 <strong>Liquidity:</strong> How much cash does the company have? Can it cover short-term obligations? (Current ratio, quick ratio)</p>
+          <p>🏗️ <strong>Capital intensity:</strong> Does the business require massive physical assets (manufacturing) or is it asset-light (software)?</p>
+          <p>⚖️ <strong>Leverage:</strong> How much debt relative to equity? What's the debt maturity schedule?</p>
+          <p>🔍 <strong>Pro tip — watch for red flags:</strong> Goodwill that's grown to be the majority of assets (acquisition strategy that may need write-downs), receivables growing faster than revenue (customers not paying), or negative equity (heavily leveraged companies like McDonald's actually run negative equity intentionally).</p>
+          <div class="highlight-box">💡 <strong>Asset-light businesses</strong> (Visa, software firms) tend to generate exceptional ROE and ROA because they earn massive profits without needing huge asset bases. Capital-intensive businesses (airlines, steel mills) earn mediocre returns even in good times.</div>
+        `,
+        quiz: [
+          { q: "The fundamental balance sheet equation is:", opts: ["Revenue = Expenses + Profit","Assets = Liabilities + Shareholders' Equity","Cash = Net Income + D&A","Equity = Assets − Revenue"], ans: 1, exp: "This equation always balances — every transaction is recorded on both sides. It's the foundation of all accounting." },
+          { q: "What is goodwill on a balance sheet?", opts: ["Company reputation score","Premium paid in acquisitions above the fair value of net assets","Customer loyalty value","Patent value"], ans: 1, exp: "Goodwill only appears after acquisitions — it's the excess purchase price over the fair value of identifiable assets." },
+          { q: "What does negative shareholders' equity mean?", opts: ["The company is bankrupt","Liabilities exceed assets — often from heavy buybacks or leverage (e.g., McDonald's)","Equity was never recorded","Accounting error"], ans: 1, exp: "Companies like McDonald's and Starbucks run negative equity by returning huge amounts of cash to shareholders via buybacks — not a sign of distress if cash flows are strong." },
+          { q: "A software company vs. a steel mill — which has better ROA and why?", opts: ["Steel mill — more physical assets","Software — earns large profits with minimal asset base (asset-light)","They'd be identical","Steel — more revenue"], ans: 1, exp: "ROA = Net Income / Assets. Software firms earn high profits with few assets → excellent ROA. Steel mills need massive CapEx → mediocre ROA." },
+          { q: "If receivables are growing 3x faster than revenue over 3 years, what's the concern?", opts: ["Strong sales pipeline","Customers may not be paying — revenue quality is deteriorating","International expansion is working","No concern, receivables should grow"], ans: 1, exp: "Receivables growing faster than revenue means the company is booking revenue it hasn't collected — a classic earnings quality warning sign." }
+        ]
+      },
+      {
+        title: "The Cash Flow Statement",
+        content: `
+          <h2>The Cash Flow Statement</h2>
+          <p>The cash flow statement is the <strong>most honest</strong> of the three financial statements. It shows exactly where cash came from and where it went — no accrual accounting, no estimates, no one-time adjustments. Just cash.</p>
+          <p>It has three sections:</p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Operating Activities (CFO)</strong><span>Cash generated from running the core business. Starts with net income and adjusts for non-cash items (D&A) and working capital changes.</span></div>
+            <div class="key-term"><strong>Investing Activities (CFI)</strong><span>Cash spent on long-term assets (CapEx) and acquisitions, or received from asset sales. Almost always negative for growing companies.</span></div>
+            <div class="key-term"><strong>Financing Activities (CFF)</strong><span>Cash from issuing/repaying debt, issuing/buying back shares, paying dividends.</span></div>
+          </div>
+          <div class="formula-box">Free Cash Flow (FCF) = CFO − CapEx</div>
+          <p><strong>FCF is the most important number on the statement.</strong> It's the cash a business truly generates after maintaining and investing in itself — what's available for debt paydown, dividends, buybacks, or acquisitions.</p>
+          <p><strong>Reading the signals:</strong></p>
+          <p>✅ <strong>CFO > Net Income consistently</strong> = high earnings quality. Cash backs up the accounting profits.</p>
+          <p>⚠️ <strong>Net Income growing, CFO flat or falling</strong> = earnings quality problem. The profits aren't translating to real cash.</p>
+          <p>🏗️ <strong>Very negative CFI</strong> = heavy investment phase. May be a good sign (reinvesting for growth) or bad (burning cash on bad acquisitions).</p>
+          <p>💰 <strong>Large positive CFF</strong> = company raised capital (debt or equity). Large negative CFF = returning cash (buybacks, debt paydown, dividends).</p>
+          <div class="highlight-box">🔑 <strong>Warren Buffett's preferred metric is Owner Earnings</strong> ≈ Net Income + D&A − Maintenance CapEx. It's a more conservative FCF that strips out only the CapEx needed to maintain (not grow) the business. Companies with high owner earnings relative to price are Buffett's hunting ground.</div>
+        `,
+        quiz: [
+          { q: "Why is the cash flow statement considered the 'most honest' financial statement?", opts: ["It's audited by regulators","It records actual cash movements with no accrual adjustments","It's the most detailed","It's the longest statement"], ans: 1, exp: "Cash flow is cash flow — you can't fake it as easily as you can manipulate accrual-based net income with accounting choices." },
+          { q: "Free Cash Flow equals:", opts: ["Net Income + Depreciation","Operating Cash Flow − Capital Expenditures","Revenue − All Expenses","EBIT × (1 − Tax Rate)"], ans: 1, exp: "FCF = CFO − CapEx. It's the cash truly available after running and investing in the business." },
+          { q: "What does it mean when Net Income is growing but CFO is flat?", opts: ["Great efficiency","Earnings quality concern — profits aren't converting to real cash","Normal for growing companies","CFO always lags net income"], ans: 1, exp: "When accounting profits outpace cash generation, it often signals aggressive revenue recognition or unfavorable working capital changes." },
+          { q: "A company has heavy negative Investing Cash Flow every year. What is the most likely explanation?", opts: ["The company is losing money","It's investing heavily in CapEx and acquisitions to grow","It's paying dividends","It's buying back stock"], ans: 1, exp: "CFI is almost always negative for growing companies — they're spending on equipment, facilities, or acquiring businesses to grow." },
+          { q: "What does a large negative Financing Cash Flow typically indicate?", opts: ["Company borrowed heavily","Returning cash to shareholders via buybacks, dividends, or debt paydown","Issuing new equity","Operating losses"], ans: 1, exp: "Negative CFF means cash is flowing OUT to capital providers — paying down debt, buying back shares, or paying dividends." }
+        ]
+      },
+      {
+        title: "How the Three Statements Connect",
+        content: `
+          <h2>How the Three Statements Connect</h2>
+          <p>The income statement, balance sheet, and cash flow statement are <strong>not three separate documents</strong> — they're three views of the same underlying economic reality, and they're deeply linked. Understanding the connections is what separates real finance people from those who just memorized definitions.</p>
+          <div class="highlight-box">🔗 The three-statement model is the most tested concept in investment banking interviews. <em>"Walk me through how a $10 increase in depreciation flows through all three statements"</em> is a canonical interview question.</div>
+          <p><strong>The key linkages:</strong></p>
+          <div class="key-terms">
+            <div class="key-term"><strong>Net Income → Retained Earnings</strong><span>Net income from the P&L flows into retained earnings on the balance sheet (via the equity section).</span></div>
+            <div class="key-term"><strong>Net Income → Cash Flow Start</strong><span>The cash flow statement starts with net income and adjusts it to arrive at actual cash.</span></div>
+            <div class="key-term"><strong>CapEx → PP&E</strong><span>Cash spent on CapEx (CFI) increases PP&E on the balance sheet, then depreciates back through the income statement over time.</span></div>
+            <div class="key-term"><strong>D&A → Both Statements</strong><span>Depreciation reduces net income (income statement) but is added back in CFO (non-cash expense) — no actual cash leaves.</span></div>
+            <div class="key-term"><strong>Working Capital Changes</strong><span>Changes in receivables, inventory, and payables hit both the balance sheet and CFO.</span></div>
+            <div class="key-term"><strong>Cash Ends on Balance Sheet</strong><span>Net change in cash from the CFS equals the change in the cash line on the balance sheet.</span></div>
+          </div>
+          <p><strong>Walk through the $10 depreciation example:</strong></p>
+          <p>📋 <strong>Income Statement:</strong> D&A ↑$10 → Pre-tax income ↓$10 → Taxes ↓$4 (at 40%) → Net Income ↓$6</p>
+          <p>💵 <strong>Cash Flow Statement:</strong> Net Income ↓$6 but D&A added back +$10 → CFO ↑$4 (the tax savings)</p>
+          <p>📊 <strong>Balance Sheet:</strong> PP&E ↓$10 (accumulated depreciation), Cash ↑$4, Retained Earnings ↓$6 → Still balances ✓</p>
+          <div class="highlight-box">💡 <strong>The 3-statement model</strong> is the foundation of financial modeling in Excel. Every DCF, LBO, and merger model is built on top of it. If you can build a clean 3-statement model, you can build anything in finance.</div>
+          <p><strong>Why this matters for Clemson + internships:</strong> Finance professors will assume you understand these linkages. Investment banking interviewers test them directly. Anyone who can articulate these connections fluently is immediately differentiated.</p>
+        `,
+        quiz: [
+          { q: "Net income from the income statement flows directly into:", opts: ["PP&E on the balance sheet","Retained earnings on the balance sheet","Financing activities on the cash flow statement","CapEx"], ans: 1, exp: "Net income increases retained earnings (part of equity) on the balance sheet. This is how profitability builds up owner wealth over time." },
+          { q: "If depreciation increases by $10 (tax rate 40%), how does Operating Cash Flow change?", opts: ["Decreases by $10","Increases by $4","No change","Decreases by $6"], ans: 1, exp: "Net income falls $6 (after tax), but D&A adds back $10 non-cash. Net CFO effect: +$4 (the tax shield benefit of depreciation)." },
+          { q: "Why is depreciation added back on the cash flow statement?", opts: ["It's a revenue item","It's a non-cash expense — no actual cash left the business","It offsets CapEx","Accounting rules require it"], ans: 1, exp: "D&A reduces net income (an accounting charge) but no cash left the company. We add it back to convert accrual income to cash income." },
+          { q: "CapEx spending appears on which two statements?", opts: ["Income statement and balance sheet","Cash flow statement (outflow) and balance sheet (increases PP&E)","Income statement only","Balance sheet only"], ans: 1, exp: "CapEx flows out as Investing Cash Flow on the CFS, then sits as PP&E on the balance sheet, slowly depreciating through the income statement." },
+          { q: "How do you know the three statements 'balance'?", opts: ["Net income equals cash flow","The ending cash on the CFS equals the change in cash on the balance sheet","Assets equal revenue","Total expenses equal total assets"], ans: 1, exp: "The net change in cash from the cash flow statement must equal the change in the cash line on the balance sheet. That's the final check." }
+        ]
+      }
+    ]
   }
 ];
 
@@ -2013,6 +2178,153 @@ function renderFormulas() {
       `).join('')}
     </div>
   `).join('');
+}
+
+// ─── GLOSSARY ────────────────────────────────────────────────────────────────
+const GLOSSARY = [
+  { category: "📊 Accounting & Statements", terms: [
+    { word: "Accrual Accounting", def: "Records revenue when earned and expenses when incurred — regardless of when cash moves." },
+    { word: "COGS", def: "Cost of Goods Sold — direct costs to produce goods sold (materials, direct labor). Revenue − COGS = Gross Profit." },
+    { word: "Depreciation", def: "Non-cash expense that spreads the cost of a long-term asset over its useful life (e.g., $100K machine over 10 years = $10K/year)." },
+    { word: "Amortization", def: "Like depreciation but for intangible assets (patents, trademarks, software). Reduces book value over time." },
+    { word: "EBIT", def: "Earnings Before Interest and Taxes — operating profit. Measures core business performance independent of financing." },
+    { word: "EBITDA", def: "Earnings Before Interest, Taxes, Depreciation & Amortization. Proxy for operating cash flow. Most used M&A valuation metric." },
+    { word: "EPS", def: "Earnings Per Share = Net Income ÷ Shares Outstanding. The most-cited per-share profit metric." },
+    { word: "Gross Margin", def: "Gross Profit ÷ Revenue. Measures production efficiency and pricing power. Apple ~44%, Walmart ~25%." },
+    { word: "Net Margin", def: "Net Income ÷ Revenue. The bottom-line percentage of revenue that becomes profit after all costs." },
+    { word: "Operating Margin", def: "EBIT ÷ Revenue. Profit from core operations, before interest and taxes." },
+    { word: "Retained Earnings", def: "Cumulative net income kept in the business (not paid out as dividends). Part of shareholders' equity." },
+    { word: "Working Capital", def: "Current Assets − Current Liabilities. Positive = can cover short-term bills; negative = potential liquidity risk." },
+    { word: "Goodwill", def: "Premium paid in an acquisition above the fair value of net assets. Only appears after M&A." },
+    { word: "PP&E", def: "Property, Plant & Equipment — physical long-term assets like factories, machinery, and buildings." },
+    { word: "Accounts Receivable", def: "Money owed to a company by customers for goods/services already delivered but not yet paid." },
+    { word: "Accounts Payable", def: "Money a company owes to suppliers for goods/services received but not yet paid." },
+  ]},
+  { category: "💵 Cash Flow", terms: [
+    { word: "Free Cash Flow (FCF)", def: "Operating Cash Flow − CapEx. The cash a business truly generates after investing to maintain/grow itself." },
+    { word: "Operating Cash Flow (CFO)", def: "Cash generated from running the core business. Starts with net income and adjusts for non-cash items and working capital." },
+    { word: "CapEx", def: "Capital Expenditures — cash spent on long-term physical assets (equipment, buildings). Appears in Investing activities." },
+    { word: "Owner Earnings", def: "Buffett's preferred metric: Net Income + D&A − Maintenance CapEx. More conservative FCF estimate." },
+    { word: "Cash Conversion Cycle", def: "Days Inventory + Days Receivable − Days Payable. How long it takes to turn inventory into cash." },
+    { word: "Burn Rate", def: "How fast a company spends cash. Used for startups: monthly burn rate = cash spent per month." },
+  ]},
+  { category: "⏱️ Time Value of Money", terms: [
+    { word: "Present Value (PV)", def: "What a future cash flow is worth in today's dollars, discounted at rate r over n periods: PV = FV/(1+r)ⁿ." },
+    { word: "Future Value (FV)", def: "What today's money will be worth in the future: FV = PV × (1+r)ⁿ." },
+    { word: "Discount Rate", def: "The rate used to convert future cash flows to present value. Reflects opportunity cost, risk, and inflation." },
+    { word: "NPV", def: "Net Present Value — sum of all discounted future cash flows minus initial investment. NPV > 0 means the project creates value." },
+    { word: "IRR", def: "Internal Rate of Return — the discount rate that makes NPV = 0. Accept if IRR > cost of capital (WACC)." },
+    { word: "Perpetuity", def: "A stream of equal cash flows that continues forever. PV = CF ÷ r." },
+    { word: "Annuity", def: "Equal payments over a fixed number of periods. PV = CF × [1−(1+r)⁻ⁿ] ÷ r." },
+    { word: "Rule of 72", def: "Divide 72 by the annual return to estimate years to double money. At 8%: 72÷8 = 9 years." },
+  ]},
+  { category: "🏢 Valuation", terms: [
+    { word: "DCF", def: "Discounted Cash Flow — values a company by discounting projected future FCFs at WACC. Intrinsic value method." },
+    { word: "Enterprise Value (EV)", def: "Market Cap + Debt − Cash. Total cost to acquire a company. Capital-structure neutral." },
+    { word: "Market Capitalization", def: "Share Price × Shares Outstanding. Total market value of equity. Does NOT include debt." },
+    { word: "P/E Ratio", def: "Price per Share ÷ EPS. How much investors pay for $1 of earnings. Higher P/E = more growth expected." },
+    { word: "EV/EBITDA", def: "Most common M&A multiple. Capital-structure neutral. Compares companies regardless of debt levels." },
+    { word: "EV/Revenue", def: "Used when EBITDA is negative (growth-stage companies). Common in SaaS and early-stage tech." },
+    { word: "Comps (Trading Multiples)", def: "Values a company based on how similar public companies are priced in the market." },
+    { word: "Precedent Transactions", def: "Values a company based on multiples paid in past M&A deals. Always higher than comps (includes control premium)." },
+    { word: "Control Premium", def: "Extra price (typically 20–40%) paid in M&A above market price to acquire full control of a company." },
+    { word: "Terminal Value", def: "Value of all cash flows beyond the explicit forecast period. Usually 60–80% of a DCF's total value." },
+    { word: "Football Field", def: "Bank presentation chart that stacks DCF, Comps, and Precedent value ranges side by side for triangulation." },
+    { word: "LBO", def: "Leveraged Buyout — acquiring a company using significant debt. PE firms use LBOs to maximize equity returns." },
+  ]},
+  { category: "🏗️ Capital Structure", terms: [
+    { word: "WACC", def: "Weighted Average Cost of Capital — blended cost of debt + equity, weighted by capital structure. Used as DCF discount rate." },
+    { word: "CAPM", def: "Capital Asset Pricing Model: Re = Rf + β(Rm−Rf). Calculates required return on equity." },
+    { word: "Beta (β)", def: "Sensitivity of a stock to market moves. β>1 = more volatile than market; β<1 = less volatile." },
+    { word: "Cost of Equity", def: "Return required by equity investors. Calculated via CAPM. Higher than cost of debt (equity is riskier)." },
+    { word: "Cost of Debt", def: "Interest rate a company pays on its borrowings. After-tax cost of debt = rate × (1 − tax rate)." },
+    { word: "Tax Shield", def: "Interest on debt is tax-deductible — reduces taxable income. Benefit = interest expense × tax rate." },
+    { word: "Leverage", def: "Using debt to finance a business. Amplifies both gains and losses. Moderate leverage increases ROE." },
+    { word: "Debt Covenant", def: "Contractual restriction in a loan agreement (e.g., min interest coverage). Breach can trigger immediate repayment." },
+  ]},
+  { category: "📈 Investing & Markets", terms: [
+    { word: "Alpha", def: "Return in excess of the benchmark (market). Positive alpha = outperforming the index." },
+    { word: "Beta", def: "Market sensitivity. β=1.5 means a 10% market move leads to a 15% stock move." },
+    { word: "Sharpe Ratio", def: "(Return − Risk-free rate) ÷ Standard Deviation. Return per unit of risk. Higher is better." },
+    { word: "Diversification", def: "Holding uncorrelated assets to reduce unsystematic (company-specific) risk." },
+    { word: "Systematic Risk", def: "Market-wide risk that can't be diversified away (recessions, interest rate changes)." },
+    { word: "Unsystematic Risk", def: "Company-specific risk (CEO leaves, product recall). Can be eliminated by diversification." },
+    { word: "Bull Market", def: "Sustained period of rising asset prices, typically defined as 20%+ rise from a trough." },
+    { word: "Bear Market", def: "Sustained decline of 20%+ from recent highs. Usually accompanied by economic slowdown." },
+    { word: "Short Selling", def: "Borrowing and selling shares you don't own, expecting to buy them back cheaper later." },
+    { word: "Hedge Fund", def: "Private investment fund using sophisticated strategies (long/short, derivatives) targeting absolute returns." },
+    { word: "Private Equity", def: "Invests in private companies, typically via LBOs. Seeks to improve operations and sell at a profit (5–7 year horizon)." },
+    { word: "Venture Capital", def: "Early-stage equity investments in startups. High risk, high potential return. Usually takes minority stakes." },
+  ]},
+  { category: "🌍 Macro & Fixed Income", terms: [
+    { word: "Federal Funds Rate", def: "The interest rate at which banks lend to each other overnight. The Fed's primary monetary policy tool." },
+    { word: "Yield Curve", def: "Graph of interest rates across maturities. Normal = upward sloping. Inverted = short rates > long rates, often predicts recession." },
+    { word: "Inflation", def: "Rate at which the general price level rises. Erodes purchasing power. Measured by CPI and PCE." },
+    { word: "Real Interest Rate", def: "Nominal rate − Inflation rate. Your actual purchasing-power return after inflation." },
+    { word: "Quantitative Easing (QE)", def: "Fed buying bonds to inject money into the economy and push down long-term interest rates." },
+    { word: "Yield to Maturity (YTM)", def: "Total return expected if a bond is held to maturity. The bond market's IRR equivalent." },
+    { word: "Credit Spread", def: "Extra yield demanded above the risk-free rate to compensate for default risk. Higher spread = riskier bond." },
+    { word: "Duration", def: "Sensitivity of a bond's price to interest rate changes. Longer duration = more price volatility." },
+    { word: "GDP", def: "Gross Domestic Product — total value of all goods and services produced in a country in a year." },
+    { word: "Recession", def: "Two consecutive quarters of negative GDP growth. Typically accompanied by rising unemployment." },
+  ]},
+  { category: "💰 Personal Finance & Wealth", terms: [
+    { word: "Compound Interest", def: "Earning returns on previous returns. Einstein called it the 8th wonder. A = P(1 + r/n)^(nt)." },
+    { word: "Roth IRA", def: "Retirement account funded with after-tax dollars. Grows and withdraws tax-free. Best for young, lower-bracket earners." },
+    { word: "401(k)", def: "Employer-sponsored retirement plan. Contributions are pre-tax. Employer match is free money — always contribute to get the full match." },
+    { word: "Asset Allocation", def: "How a portfolio is split across asset classes (stocks, bonds, real estate). Primary driver of long-term returns." },
+    { word: "Rebalancing", def: "Periodically restoring a portfolio to its target allocation by selling winners and buying laggards." },
+    { word: "Dollar-Cost Averaging", def: "Investing a fixed amount at regular intervals regardless of price. Reduces the impact of market timing." },
+    { word: "Emergency Fund", def: "3–6 months of expenses in liquid savings. The foundation of personal financial security." },
+    { word: "Net Worth", def: "Total Assets − Total Liabilities. The single number that measures your financial position." },
+    { word: "4% Rule", def: "You can withdraw 4% of your portfolio annually in retirement with high probability it lasts 30 years. Portfolio needed = annual expenses × 25." },
+  ]},
+];
+
+function renderGlossary() {
+  updateNav();
+  filterGlossary('');
+}
+
+function filterGlossary(query) {
+  const q = query.toLowerCase().trim();
+  const body = document.getElementById('glossary-body');
+  const countEl = document.getElementById('glossary-count');
+  let totalShown = 0;
+  let html = '';
+
+  GLOSSARY.forEach(cat => {
+    const matches = cat.terms.filter(t =>
+      !q || t.word.toLowerCase().includes(q) || t.def.toLowerCase().includes(q)
+    );
+    if (matches.length === 0) return;
+    totalShown += matches.length;
+    html += `<div class="glossary-category">
+      <div class="glossary-cat-title">${cat.category}</div>
+      <div class="glossary-grid">
+        ${matches.map(t => `
+          <div class="glossary-term${q && (t.word.toLowerCase().includes(q) || t.def.toLowerCase().includes(q)) ? ' highlight' : ''}">
+            <div class="glossary-term-word">${highlight(t.word, q)}</div>
+            <div class="glossary-term-def">${highlight(t.def, q)}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  });
+
+  if (totalShown === 0) {
+    body.innerHTML = `<div class="glossary-empty"><div style="font-size:48px">🔍</div><p>No terms match "<strong>${query}</strong>"</p></div>`;
+  } else {
+    body.innerHTML = html;
+  }
+  const total = GLOSSARY.reduce((s, c) => s + c.terms.length, 0);
+  countEl.textContent = q ? `${totalShown} of ${total} terms match` : `${total} terms across ${GLOSSARY.length} categories`;
+}
+
+function highlight(text, query) {
+  if (!query) return text;
+  const re = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  return text.replace(re, '<mark style="background:var(--yellow-light);border-radius:3px;padding:0 2px">$1</mark>');
 }
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
